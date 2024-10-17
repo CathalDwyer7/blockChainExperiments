@@ -1,93 +1,58 @@
-# 2025-csc1049-cdwyer-blockchain-quadratic-voting-system
+# School of Computing CSC1049 Year 3 Project Proposal Form
 
 
+Project Title: **Block-Chain Quadratic Voting System**
 
-## Getting started
+Student 1 Name: **Cathal Dwyer**
+ID Number: 22391376
 
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
+Student 2 Name: **Giuseppe Esposito**
+ID Number: 22702705
 
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
-
-## Add your files
-
-- [ ] [Create](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#create-a-file) or [upload](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#upload-a-file) files
-- [ ] [Add files using the command line](https://docs.gitlab.com/ee/gitlab-basics/add-file.html#add-a-file-using-the-command-line) or push an existing Git repository with the following command:
-
-```
-cd existing_repo
-git remote add origin https://gitlab.computing.dcu.ie/dwyerc24/2025-csc1049-cdwyer-blockchain-quadratic-voting-system.git
-git branch -M main
-git push -uf origin main
-```
-
-## Integrate with your tools
-
-- [ ] [Set up project integrations](https://gitlab.computing.dcu.ie/dwyerc24/2025-csc1049-cdwyer-blockchain-quadratic-voting-system/-/settings/integrations)
-
-## Collaborate with your team
-
-- [ ] [Invite team members and collaborators](https://docs.gitlab.com/ee/user/project/members/)
-- [ ] [Create a new merge request](https://docs.gitlab.com/ee/user/project/merge_requests/creating_merge_requests.html)
-- [ ] [Automatically close issues from merge requests](https://docs.gitlab.com/ee/user/project/issues/managing_issues.html#closing-issues-automatically)
-- [ ] [Enable merge request approvals](https://docs.gitlab.com/ee/user/project/merge_requests/approvals/)
-- [ ] [Set auto-merge](https://docs.gitlab.com/ee/user/project/merge_requests/merge_when_pipeline_succeeds.html)
-
-## Test and Deploy
-
-Use the built-in continuous integration in GitLab.
-
-- [ ] [Get started with GitLab CI/CD](https://docs.gitlab.com/ee/ci/quick_start/index.html)
-- [ ] [Analyze your code for known vulnerabilities with Static Application Security Testing (SAST)](https://docs.gitlab.com/ee/user/application_security/sast/)
-- [ ] [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/ee/topics/autodevops/requirements.html)
-- [ ] [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/ee/user/clusters/agent/)
-- [ ] [Set up protected environments](https://docs.gitlab.com/ee/ci/environments/protected_environments.html)
-
-***
-
-# Editing this README
-
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thanks to [makeareadme.com](https://www.makeareadme.com/) for this template.
-
-## Suggestions for a good README
-
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
-
-## Name
-Choose a self-explaining name for your project.
+Staff Member Consulted **Geoff Hamilton**
 
 ## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
 
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
+### Introduction
+This project proposes a digital voting system utilising a custom blockchain to ensure transparency, security, and immutability. It implements a quadratic voting mechanism that balances voters' preferences with the intensity of their choices. The system manages multiple simultaneous votes and ensures voter authentication via Estonia's e-ID[^1] like system, verifying that only authorised users can vote.
 
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
+### Project Goals
+The main goals are to create a blockchain that records and verifies multiple votes as immutable transactions, implement quadratic voting to prevent minority domination, ensure secure authentication through a digital identity system, and manage multiple simultaneous elections accurately.
 
-## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
+### Description of the System
+The blockchain acts as the core infrastructure, with each block containing a hash of the previous block, anonymized voter IDs, the selected voting option, and the number of votes cast. It employs a Proof of Work (PoW) mechanism for decentralised validation of votes.
+Quadratic voting allows voters to distribute their votes more flexibly, with the cost of votes increasing quadratically to discourage vote accumulation on a single option.
+The authentication system uses a similar approach to that of Estonia's e-ID, including two-factor authentication (2FA), ensuring that only verified voters can access the system. Each vote is tagged with an ID to distinguish simultaneous elections, and all votes are stored immutably in the blockchain for final tallying.
 
-## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
+### System Architecture
+The government dashboard facilitates the creation, management, and monitoring of votes, displaying results in real-time. The voter dashboard allows users to view active elections, cast quadratic votes, and track their remaining credits. The system ensures high standards of security and privacy throughout the voting process.
 
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
 
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
+## Division of Work
+- Giuseppe: Focus on building the core blockchain, implementing the consensus mechanism (Proof of Work), managing transactions, and ensuring blockchain security. Giuseppe also handles the backend API for the blockchain.
+- Cathal: Handle the authentication system, manage voter identity validation and security protocols, focus on data encryption, and ensure resilience against attacks. Cathal will also take care of any cryptographic signing of transactions and secure interaction with the blockchain.
 
-## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
+By focusing on the deeper blockchain and security aspects, both of us will have substantial, challenging work that involves key aspects of both infrastructure and security.
+We will work together on any task that proves to be especially difficult.
 
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
+## Programming language(s)
+- Python
+- JS
+- HTML-CSS
 
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
+## Programming tools(s)
+- Flask (web-tool)
+- SQLite (data-base)
+- unittest (testing)
 
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
+## Learning Challenge 
+- technology: Blockchain architecture, how decentralisation and consensus works,
+- tools: restufullAPI with Flask, unittest module
 
-## License
-For open source projects, say how it is licensed.
+## Hardware / software platform
+- Linux
 
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
+## Special hardware:
+- None
+
+[^1]: “ID-card,” e-Estonia, Jun. 10, 2024. https://e-estonia.com/solutions/estonian-e-identity/id-card/
