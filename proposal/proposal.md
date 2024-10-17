@@ -29,8 +29,8 @@ The government dashboard facilitates the creation, management, and monitoring of
 
 
 ## Division of Work
-- Giuseppe: Focus on building the core blockchain, implementing the consensus mechanism (Proof of Work), managing transactions, and ensuring blockchain security. Giuseppe also handles the backend API for the blockchain.
-- Cathal: Handle the authentication system, manage voter identity validation and security protocols, focus on data encryption, and ensure resilience against attacks. Cathal will also take care of any cryptographic signing of transactions and secure interaction with the blockchain.
+- Giuseppe: Focus on building the core blockchain, implementing the consensus mechanism (Proof of Work), managing transactions, and ensuring blockchain security. He also handles the backend API for the blockchain.
+- Cathal: Handle the authentication system, manage voter identity validation and security protocols, focus on data encryption, and ensure resilience against attacks. He will also take care of any cryptographic signing of transactions and secure interaction with the blockchain.
 
 By focusing on the deeper blockchain and security aspects, both of us will have substantial, challenging work that involves key aspects of both infrastructure and security.
 We will work together on any task that proves to be especially difficult.
