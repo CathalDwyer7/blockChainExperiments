@@ -27,6 +27,12 @@ The authentication system uses a similar approach to that of Estonia's e-ID, inc
 ### System Architecture
 The government dashboard facilitates the creation, management, and monitoring of votes, displaying results in real-time. The voter dashboard allows users to view active elections, cast quadratic votes, and track their remaining credits. The system ensures high standards of security and privacy throughout the voting process.
 
+### Privacy Mechanisms
+To protect voter privacy, the system will implement blind signatures.
+
+- Blind Signatures: These allow voters to receive authentication without revealing their vote content, ensuring that the system verifies identities without knowing the actual votes.
+
+This method guarantees voter anonymity while maintaining the integrity of the voting process.
 
 ## Division of Work
 - Giuseppe: Focus on building the core blockchain, implementing the consensus mechanism (Proof of Work), managing transactions, and ensuring blockchain security. He also handles the backend API for the blockchain.
@@ -46,7 +52,7 @@ We will work together on any task that proves to be especially difficult.
 - unittest (testing)
 
 ## Learning Challenge 
-- technology: Blockchain architecture, how decentralisation and consensus works,
+- technology: Blockchain architecture, how decentralisation and consensus works, blind signatures
 - tools: restufullAPI with Flask, unittest module
 
 ## Hardware / software platform
