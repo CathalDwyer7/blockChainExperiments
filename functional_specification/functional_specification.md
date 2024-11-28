@@ -1,6 +1,5 @@
 # Functional Specification for blockchain quadratic voting system
 
-# Table of Contents
 1. [Introduction](#1-introduction)  
    - [Overview](#11-overview)  
    - [Business Context](#12-business-context)  
@@ -46,6 +45,8 @@
    - [Gantt Chart](#63-gantt-chart)  
 7. [Appendix](#7-appendix)  
    - [References](#71-reference)  
+
+----------
 
 ## 1. Introduction
 
