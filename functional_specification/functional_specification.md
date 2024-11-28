@@ -521,17 +521,19 @@ Blow with these two diagram made by using PlantUML, we show the whole system and
 
 
 ### 6.2 Requirements
-- Frontend: React.js for all the dashboards.
-- Backend: Flask for the Election server.
-- Blockchain: Python for developing the custom blockchain.
-- Database: SQLite for election and user data storage.
-- Testing Tools: such as Postman
+- **Frontend**: React.js for all the dashboards.
+- **Backend**: Flask for the Election server.
+- **Blockchain**: Python for developing the custom blockchain.
+- **Database**: SQLite for election and user data storage.
+- **Testing Tools**: such as Postman
 
 
 ### 6.3 Gantt Chart 
 ![](https://lh7-rt.googleusercontent.com/docsz/AD_4nXdm6iDzMih8FsfQTgr_XEquoKj_X5GkPyxaOlkY6T8uDE-CJ7ID7pfVlJjomyP06Erru6V-NeczYtNUtyp60aQ8x2fcvviOiqryIjFK73MXSS04iT9Xa2mFrJwVVZH7FOhkU33Uog?key=OPlPKb10dUxl9KW5gTOyK8ZK)
 
-## Appendix
+## 7 Appendix
+
+### 7.1 Reference
 
 1. A 501(c)(3) tax-exempt, charitable organization, 1100 13th Street, NW, Suite 800, Washington, DC 20005-857-0044. **"Cost of Election," OpenSecrets.**  
    Available at: [https://www.opensecrets.org/elections-overview/cost-of-election?display=T](https://www.opensecrets.org/elections-overview/cost-of-election?display=T)
