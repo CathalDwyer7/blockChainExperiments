@@ -419,3 +419,71 @@ By meeting the needs of all these categories, the whole system ensures an inclus
 | 2a       | Metric not available. System displays a notification indicating that specific metrics are temporarily unavailable.                              |
 
 ### 2.4 Constraints
+
+Below is a list of possible constraints, that the design and implementation of the system is subjected to:
+- **Blockchain Processing Speed**: PoW validation may affect vote processing time.
+- **Performance**: Will the system handle concurrent voting sessions efficiently.
+- **Security Requirements**: Data encryption and system resilience are critical.
+- **Privacy Regulations**: Compliant with privacy standards to protect voter anonymity.
+- **Regulatory Compliance**: the system must meet legal requirements of the country.
+
+
+## 3. Requirements
+
+### 3.1 Register/Login
+*Description:* The user authenticates their identity with their digital ID. This shall be based on two-factor authentication.  
+*Technical Issues:* Shall securely handle and store user credentials and encrypt all user credentials to prevent unauthorized access.
+
+### 3.2 Quadratic Voting
+*Description:* Voters submit votes with quadratic costs to balance the power of majorities and minorities. Example: Voting 3 times costs 3<sup>2</sup> = 9 credits.  
+*Criticality:* Ensures fair representation while balancing majority influence with minority interest.  
+*Technical Issues:* Calculation of quadratic costs correctly and real-time deduction of voter credits.
+
+### 3.3 Election Management
+*Description:* The administrators create elections and manage them by assigning unique IDs to allow multiple voting events simultaneously.  
+*Technical Issues:* Avoiding conflict between elections and handling parallel events robustly.
+
+### 3.4 Vote Casting and Authentication
+*Description:* The voter securely casts the vote using the Estonian e-ID-based system.  
+*Technical Issues:* Avoid unauthorized access and duplicate voting.
+
+### 3.5 Vote Counting and Result Display
+*Description:* Government dashboard is updated in real time.  
+*Technical Issues:* Requires high security and speed for correct display.
+
+### 3.6 Privacy and Security Mechanisms
+*Description:* Blind signatures ensure the privacy of the voter.  
+*Technical Issues:* Keeps anonymity but confirms authenticity of voter.
+
+### 3.7 Blockchain Integration
+*Description:* All votes are recorded securely on the blockchain. One block holds up to 50 votes. Blockchain verifies blocks to keep the data integrity and unchangeable.  
+*Technical Issues:* Real-time block validation and seamless integration with the voting mechanism.
+
+### 3.8 User Roles and Permissions
+*Description:* The system shall have three user roles:
+  - **Voters:** Can view proposals, assign votes, and submit choices.
+  - **Admins:** Can create/manage voting events, add and remove proposals, and publish results.
+  - **Miners:** Shall validate blocks and store transactions on the blockchain.  
+
+*Technical Issues:* The system should use role-based access control to prevent unauthorized actions.
+
+### 3.9 Proposal Management
+*Description:* Admins can manage proposals - add, update, and remove. Proposals shall include:
+- Title
+- Description
+- Total vote count.
+
+### 3.10 Election Results
+*Description:* The results are computed and published after the end of the election, which is the outcome of the votes stored in blockchain.  
+*Technical Issues:* Computation of results correctly and transparently.
+
+### 3.11 Incentive Mechanism for Miners
+*Description:* Miners are incentivized with a Miner coin for the validation and storage of blocks.  
+*Technical Issues:* Transparency in reward distribution and an auditable mechanism for the payments.
+
+### 3.12 Data Management
+*Description:* The system should store all data about voting events, proposals, votes, and blockchain transactions.  
+*Technical Issues:* Data should be kept confidential but at the same time auditable.
+
+### 3.13 Optional Features
+*Real-time Progress Tracking:* Show real-time statistics of the ongoing voting (for example, votes per proposal) during an election to increase transparency.
