@@ -1,0 +1,421 @@
+# Functional Specification for blockchain quadratic voting system
+
+## 1. Introduction
+
+### 1.1 Overview
+
+this project goal is to create a  quadratic voting system based on a custom blockchain, it is designed to use a centralized authentication service (like estoniaid), and a decentralized mining system. to ensure a safe and clear environment for voting.
+
+the system includes three dashboards:
+- user dashboard: allows user to authenticate, view active elections, and vote using quadratic mechanism
+- admin dashboard: allows administrators to create and manage elections, configure candidats, and monitor progress.
+- miner dashboard: allows miners to mine directly from the browser, monitoring mining status and verify accumulated rewards
+
+the blockchain records votes and miner-coins in blocks validated by miners. miners can start and control the mining process only from their dashboard, which evaluates the solution to the pow and sends the valid block to the blockchain. when a miner completes a pow, they get an amount x of miner-conis.
+
+an election server (that is our representation and simplification of the estoniaid), manages centralized authentication and provides data about the elections such as candidate names, start / end dates etc. finally a centralized treasury server should convert the rewards accumulated by miners into real money or whatever the country thinks is a suitable reward.
+
+this approach makes the system accessible, secure, and decentralized, balancing technical complexity of the block chain with a nice user-friendly interface.
+
+### 1.2 Business Context 
+
+
+this system can be utilised by european country governments such as italy, that claims to spend around 400 million euro per election. this includes costs for logistics, voting materials, personnel such as scrutineers and election officials, and also infrastructure.
+
+if we do the maths, italy has 60 million people, let suppose that only 50 million pays taxes and votes, it is (400 / 50) = 8 euros that people pay for each election.
+
+in general, traditional elections are resource-intensive, because they require physical assets, a manual verification process, and a lot of people. by transitioning to an online voting system, a lot of money can be saved. for instance:
+- elimination of physical materials: ballots, voting booths, and other supplies.
+- reduced personal costs: automation of processes like voter registration and tallying.
+- simplified logistics: no need to organize physical polling stations or transport materials.
+
+this blockchain-based system offers immutable and clear data that aligns with the requirements of a democratic system. the implementation of this system could save millions of euros per election cycle, while increasing accessibility for citizens, including those with mobility challenges.
+
+### 1.3 Glossary
+
+- **blockchain**: a decentralised, immutable ledger.
+- **quadratic voting**: voting method that allows users to cast multiple votes with a quadratic cost increase.
+- **estonian e-id system**: digital identification technology used for voter verification.
+- **pow**: proof of work, a consensus mechanism.
+- **miner-coins**: it is the reward for the mine that complete the pow, (this can can’t be exchanged with other users, but just with the country that decides how much it is worth)
+
+## 2. General description
+
+### 2.1 Product/system functions 
+
+the system general functions are as follows:
+
+- **User management**
+  - voter auth: enables voters to use a centralised service (e.g. estoniaid) for authentication.
+  - administrator access: gives admin the possibility to oversee elections, choose candidates names, and review results.
+  - miner auth: provides a dashboard for miners to participate in pow and get rewards.
+
+- **Election management**
+  - election creation: admin can create elections and define candidates information.
+  - election data management: stores and manages election data securely in a centralised database.
+
+- **Voting process**
+  - quadratic voting: implements quadratic voting logic, allowing voters to vote their favourite candidates, with the cost of votes increasing quadratically.
+  - voter submission: submits votes to the blockchain for immutable recording.
+  - real-time validation: validates votes using the blockchain.
+
+- **Mining**
+  - mining interface: provides miners their dashboard to start mine from the browser.
+  - block validation: checks validity of votes and adds new blocks to the blockchain.
+  - rewards system: handle the rewards for the miners.
+
+- **Blockchain integration**
+  - Immutable Record: stores a ledger of votes and transactions (miner-coins)
+  - Decentralized Validation: check the integrity of the voting process
+  - Reward payout: it should utilise another server (Treasury Server) that convert miner-coin into a rewards (i.e. real money)
+
+- **Transparency and monitoring**
+  - User Dashboard: allows users to see available elections and track voting history.
+  - Admin Dashboard: provides tools to monitor elections in progress and check the results.
+  - Miner Dashboard: shows mining activity, rewards, payment history
+
+By using both centralized user management and decentralized blockchain validation, this system offers an efficient, secure and cheaper alternative to traditional voting.
+
+### 2.2 User Characteristics and Objectives
+
+
+The user community for this project can be split into three categories: voters, miners and administrators. Each group has different characteristics, objectives and requirements while interacting with our system.
+
+- **Voters**
+  - Characteristics
+    - Citizens eligible to vote
+    - No technical knowledge of blockchain
+    - Expected to have a basic digital understanding, such as ability to use a website
+  - Objective
+    - Vote in a user-friendly environment
+    - View elections and their voting history
+  - Requirements
+    - Intuitive interface that guides users through the voting process
+    - Assurance of security and anonymity during the process of voting
+- **Miners**
+  - Characteristics
+    - Individual that participate in the validation process of the votes
+    - Basic knowledge of the blockchain concepts is preferred
+    - Should have computational resources required for mining.
+  - Objective
+    - Validate blocks to get the rewards
+    - Track payouts
+  - Requirements
+    - A dedicate Miner Dashboard
+    - Clear instructions and documentation for non experts to understand mining
+- **Administrators**
+  - Characteristics
+    - Responsible for managing elections and monitoring system performance
+    - Understanding of election process and system configuration expected.
+    - Technical expertise would be good
+  - Objective
+    - Create and mange elections
+    - Monitor election results
+  - Requirements
+    - A dedicated AdminDashboard
+
+By meeting the needs of all these categories, the whole system ensures an inclusive experience for the voters, a good efficiency for the miners, and a smooth management of the admins.
+
+### 2.3 Operational Scenarios
+
+
+#### **Use case 1**
+| **Section**                | **Details**                                                                                                                                      |
+|----------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------|
+| **Use Case**               | User registration/login                                                                                                                        |
+| **Goal in Context**        | Allow voters and admins to securely access the system with proper authentication.                                                              |
+| **Scope & Level**          | System-wide, high-level authentication process.                                                                                                |
+| **Preconditions**          | - System is online and operational. <br> - User has a valid digital ID. <br> - 2FA is enabled.                                                |
+| **Success End Condition**  | The user is logged in and redirected to their role-specific dashboard.                                                                         |
+| **Failed End Condition**   | The system denies access due to incorrect credentials or failed 2FA.                                                                           |
+| **Primary Actors**         | Voter, Admin                                                                                                                                   |
+| **Secondary Actors**       | Authentication service, Digital ID verification system.                                                                                       |
+| **Trigger**                | A user navigates to the system login page and initiates the login process.                                                                    |
+
+#### **Description**
+| **Step** | **Action**                                                                                                  |
+|----------|------------------------------------------------------------------------------------------------------------|
+| 1        | The user enters their username and password.                                                               |
+| 2        | The system validates the credentials against the government's database.                                    |
+| 3        | The government system prompts for 2FA verification (authentication app).                                  |
+| 4        | User provides the 2FA code.                                                                                |
+| 5        | The system verifies the code and logs the user in.                                                        |
+| 6        | The user is redirected to their dashboard.                                                                |
+
+#### **Extensions**
+| **Step** | **Branching Action**                                                                                       |
+|----------|-----------------------------------------------------------------------------------------------------------|
+| 1a       | Invalid credentials prompt the user to re-enter their credentials and display an error message (e.g., forgotten password). |
+| 3a       | Failed 2FA verification denies access and prompts the user to retry.                                      |
+
+
+----------
+
+#### **Use case 2**
+| **Section**                | **Details**                                                                                                                                      |
+|----------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------|
+| **Use Case**               | Create Election                                                                                                                                |
+| **Goal in Context**        | Enable admins to create and configure elections with proposals.                                                                                |
+| **Scope & Level**          | System-level; focused on admin functionality.                                                                                                  |
+| **Preconditions**          | - Admin is logged into the system. <br> - System is operational and capable of creating election objects.                                       |
+| **Success End Condition**  | The election is successfully created with all necessary configurations.                                                                        |
+| **Failed End Condition**   | The election creation fails due to missing or invalid data.                                                                                   |
+| **Primary Actors**         | Admin                                                                                                                                          |
+| **Secondary Actors**       | System                                                                                                                                         |
+| **Trigger**                | The admin navigates to the “create election” page.                                                                                            |
+
+#### **Description**
+| **Step** | **Action**                                                                                                  |
+|----------|------------------------------------------------------------------------------------------------------------|
+| 1        | Admin selects “create election.”                                                                           |
+| 2        | Admin inputs election details, including (e.g., title, description).                                       |
+| 3        | The system validates the input.                                                                            |
+| 4        | Upon success, the system creates the election and assigns a unique ID.                                     |
+| 5        | Admin is notified that the election was created.                                                           |
+
+#### **Extensions**
+| **Step** | **Branching Action**                                                                                       |
+|----------|-----------------------------------------------------------------------------------------------------------|
+| 2a       | Missing/invalid data. The system highlights invalid fields and prevents submission until corrected.        |
+| 4a       | Database error. The system logs the issue and notifies the admin of the failure.                           |
+
+----------
+
+
+#### **Use case 3**
+| **Section**                | **Details**                                                                                                                                      |
+|----------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------|
+| **Use Case**               | Vote Allocation                                                                                                                                |
+| **Goal in Context**        | Allow voters to allocate votes to proposals using quadratic voting.                                                                            |
+| **Scope & Level**          | System-wide; voter interaction with the voting mechanism.                                                                                      |
+| **Preconditions**          | - Voter is logged into the system. <br> - Election is active and open for voting.                                                              |
+| **Success End Condition**  | The vote is successfully cast, and credits are deducted accordingly.                                                                           |
+| **Failed End Condition**   | The vote allocation fails due to insufficient credits or system errors.                                                                        |
+| **Primary Actors**         | Voter                                                                                                                                          |
+| **Secondary Actors**       | Blockchain                                                                                                                                    |
+| **Trigger**                | Voter selects a proposal and initiates vote allocation.                                                                                       |
+
+#### **Description**
+| **Step** | **Action**                                                                                                  |
+|----------|------------------------------------------------------------------------------------------------------------|
+| 1        | Voter selects a proposal.                                                                                  |
+| 2        | Voter inputs the number of votes to allocate.                                                              |
+| 3        | The system calculates the quadratic cost and checks available credits.                                     |
+| 4        | The system deducts credits and records the vote on the blockchain.                                         |
+| 5        | The system notifies the voter of a successful allocation.                                                  |
+
+#### **Extensions**
+| **Step** | **Branching Action**                                                                                       |
+|----------|-----------------------------------------------------------------------------------------------------------|
+| 3a       | Insufficient credits. The system notifies the voter and prevents the vote allocation.                     |
+| 4a       | Blockchain error. The system retries the transaction and logs the issue if unresolved.                    |
+
+----------
+
+#### **Use case 4**
+
+| **Section**                | **Details**                                                                                                                                      |
+|----------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------|
+| **Use Case**               | Display Election Results                                                                                                                       |
+| **Goal in Context**        | Provide real-time access to election results for voters and admins.                                                                            |
+| **Scope & Level**          | System-wide; read-only interaction with the blockchain.                                                                                        |
+| **Preconditions**          | - The election has ended. <br> - Votes are tallied and recorded on the blockchain.                                                             |
+| **Success End Condition**  | Results are displayed accurately on the dashboard.                                                                                            |
+| **Failed End Condition**   | Results fail to display due to system or blockchain errors.                                                                                    |
+| **Primary Actors**         | Voter, Admin                                                                                                                                   |
+| **Secondary Actors**       | Blockchain                                                                                                                                     |
+| **Trigger**                | A user selects the "View Results" option for a completed election.                                                                            |
+
+#### **Description**
+| **Step** | **Action**                                                                                                  |
+|----------|------------------------------------------------------------------------------------------------------------|
+| 1        | User navigates to the election results page.                                                               |
+| 2        | System queries the blockchain for vote tallies.                                                            |
+| 3        | System calculates results based on tallied votes.                                                         |
+| 4        | Results are displayed on the dashboard, categorized by proposals.                                          |
+
+#### **Extensions**
+| **Step** | **Branching Action**                                                                                       |
+|----------|-----------------------------------------------------------------------------------------------------------|
+| 2a       | Blockchain query failure. The system displays an error message and retries the query.                     |
+----------
+#### **Use case 5**
+
+
+| **Section**                | **Details**                                                                                                                                      |
+|----------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------|
+| **Use Case**               | Reward Miners                                                                                                                                   |
+| **Goal in Context**        | Reward miners for validating and storing blocks on the blockchain.                                                                              |
+| **Scope & Level**          | System-level; interaction with miners and blockchain.                                                                                          |
+| **Preconditions**          | - Miners successfully validate a block.                                                                                                        |
+| **Success End Condition**  | Miners are rewarded for their contribution.                                                                                                    |
+| **Failed End Condition**   | The system fails to process the reward due to a validation or payment error.                                                                   |
+| **Primary Actors**         | Miner                                                                                                                                          |
+| **Secondary Actors**       | Blockchain                                                                                                                                     |
+| **Trigger**                | A block is successfully validated and added to the blockchain.                                                                                |
+
+#### **Description**
+| **Step** | **Action**                                                                                                  |
+|----------|------------------------------------------------------------------------------------------------------------|
+| 1        | Miner validates a block of votes.                                                                          |
+| 2        | System verifies the block's validity.                                                                      |
+| 3        | System processes the reward for the miner.                                                                 |
+| 4        | Miner receives confirmation of payment.                                                                    |
+
+#### **Extensions**
+| **Step** | **Branching Action**                                                                                       |
+|----------|-----------------------------------------------------------------------------------------------------------|
+| 2a       | Block validation failure. System rejects the block and logs the reason.                                   |
+| 3a       | Payment processing error. System retries the payment and notifies the miner of the delay.                 |
+
+----------
+
+#### **Use case 6**
+
+
+| **Section**                | **Details**                                                                                                                                      |
+|----------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------|
+| **Use Case**               | Monitor Election Progress                                                                                                                       |
+| **Goal in Context**        | Allow admins to view the ongoing status of an election, including voter turnout and votes per proposal.                                         |
+| **Scope & Level**          | Admin-level; read-only access to the election's progress data.                                                                                  |
+| **Preconditions**          | - The election is active. <br> - Votes are being cast.                                                                                         |
+| **Success End Condition**  | Admin sees real-time updates of voter activity and proposal statistics.                                                                         |
+| **Failed End Condition**   | The system fails to fetch progress data or displays incorrect information.                                                                      |
+| **Primary Actors**         | Admin                                                                                                                                          |
+| **Secondary Actors**       | Blockchain                                                                                                                                     |
+| **Trigger**                | Admin selects "View Election Progress" from their dashboard.                                                                                   |
+
+#### **Description**
+| **Step** | **Action**                                                                                                  |
+|----------|------------------------------------------------------------------------------------------------------------|
+| 1        | Admin navigates to the election progress page.                                                             |
+| 2        | System queries the blockchain for the current state of votes.                                              |
+| 3        | System displays voter turnout and proposal statistics.                                                     |
+| 4        | Admin monitors the data.                                                                                   |
+
+#### **Extensions**
+| **Step** | **Branching Action**                                                                                       |
+|----------|-----------------------------------------------------------------------------------------------------------|
+| 2a       | Data query failure. System logs the error and retries fetching the data.                                   |
+
+----------
+
+#### **Use case 7**
+
+
+| **Section**                | **Details**                                                                                                                                      |
+|----------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------|
+| **Use Case**               | Detect and Prevent Fraudulent Activity                                                                                                          |
+| **Goal in Context**        | Ensure the system detects and blocks unauthorized access or duplicate voting attempts.                                                         |
+| **Scope & Level**          | System-level; focused on security and integrity.                                                                                               |
+| **Preconditions**          | - The system is actively monitoring for anomalies.                                                                                             |
+| **Success End Condition**  | Fraudulent activity is detected and prevented.                                                                                                 |
+| **Failed End Condition**   | A fraudulent attempt bypasses detection mechanisms.                                                                                            |
+| **Primary Actors**         | System                                                                                                                                         |
+| **Secondary Actors**       | Voter, Admin                                                                                                                                   |
+| **Trigger**                | The system detects an anomaly, such as multiple votes from the same ID or unauthorized login attempts.                                         |
+
+#### **Description**
+| **Step** | **Action**                                                                                                  |
+|----------|------------------------------------------------------------------------------------------------------------|
+| 1        | The system monitors login attempts and voting behavior.                                                    |
+| 2        | An anomaly (e.g., duplicate votes) triggers a fraud detection algorithm.                                   |
+| 3        | The system logs the activity and flags the account.                                                        |
+| 4        | Admins are notified for further investigation.                                                             |
+
+#### **Extensions**
+| **Step** | **Branching Action**                                                                                       |
+|----------|-----------------------------------------------------------------------------------------------------------|
+| 3a       | False positive. Admin reviews the flagged activity and clears the account if legitimate.                  |
+
+----------
+
+#### **Use case 8**
+
+
+| **Section**                | **Details**                                                                                                                                      |
+|----------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------|
+| **Use Case**               | Auditing and Transparency Reporting                                                                                                             |
+| **Goal in Context**        | Allow third-party auditors to verify election integrity and transparency.                                                                      |
+| **Scope & Level**          | System-level; focused on compliance and auditing.                                                                                              |
+| **Preconditions**          | - The election has concluded. <br> - Blockchain data is accessible for auditing.                                                              |
+| **Success End Condition**  | Auditors successfully verify election results and process integrity.                                                                           |
+| **Failed End Condition**   | Auditors encounter inconsistencies or cannot access data.                                                                                      |
+| **Primary Actors**         | Auditor                                                                                                                                         |
+| **Secondary Actors**       | System, Admin                                                                                                                                   |
+| **Trigger**                | An auditor requests access to election data for verification.                                                                                 |
+
+#### **Description**
+| **Step** | **Action**                                                                                                  |
+|----------|------------------------------------------------------------------------------------------------------------|
+| 1        | Auditor submits an access request to the admin.                                                            |
+| 2        | Admin grants temporary access with specific permissions.                                                   |
+| 3        | Auditor queries blockchain data for proposals, votes, and results.                                         |
+| 4        | System provides requested data for analysis.                                                               |
+| 5        | Auditor confirms data integrity and submits a report.                                                      |
+
+#### **Extensions**
+| **Step** | **Branching Action**                                                                                       |
+|----------|-----------------------------------------------------------------------------------------------------------|
+| 3a       | Data integrity failure. Auditor identifies inconsistencies and reports the issue to the admin.                                                |
+
+----------
+
+#### **Use case 9**
+
+
+| **Section**                | **Details**                                                                                                                                      |
+|----------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------|
+| **Use Case**               | Proposal Management                                                                                                                            |
+| **Goal in Context**        | Enable admins to manage proposals for an election by adding, editing, or removing them.                                                        |
+| **Scope & Level**          | Admin-level; focuses on managing proposal-related data.                                                                                        |
+| **Preconditions**          | - Admin is logged into the system. <br> - The election is in the setup phase.                                                                  |
+| **Success End Condition**  | Proposals are updated successfully without errors.                                                                                             |
+| **Failed End Condition**   | Proposal updates fail due to validation errors or system issues.                                                                               |
+| **Primary Actors**         | Admin                                                                                                                                          |
+| **Secondary Actors**       | None                                                                                                                                           |
+| **Trigger**                | Admin selects "Manage Proposals" for a specific election.                                                                                     |
+
+#### **Description**
+| **Step** | **Action**                                                                                                  |
+|----------|------------------------------------------------------------------------------------------------------------|
+| 1        | Admin navigates to the proposals page for an election.                                                     |
+| 2        | Admin adds, edits, or removes proposals.                                                                   |
+| 3        | System validates the changes.                                                                              |
+| 4        | System updates the blockchain with the new proposal data.                                                 |
+
+#### **Extensions**
+| **Step** | **Branching Action**                                                                                       |
+|----------|-----------------------------------------------------------------------------------------------------------|
+| 3a       | Validation error. System highlights the issue (e.g., missing title) and prevents submission.                                                   |
+
+----------
+
+#### **Use case 10**
+
+
+| **Section**                | **Details**                                                                                                                                      |
+|----------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------|
+| **Use Case**               | System Monitoring and Performance Analytics                                                                                                    |
+| **Goal in Context**        | Provide real-time insights into system performance, such as server load and blockchain activity.                                                |
+| **Scope & Level**          | Admin-level; focused on system health and performance metrics.                                                                                  |
+| **Preconditions**          | - The system is operational.                                                                                                                   |
+| **Success End Condition**  | Admins access a dashboard with live system performance data.                                                                                   |
+| **Failed End Condition**   | Performance metrics are unavailable due to monitoring failures.                                                                                |
+| **Primary Actors**         | Admin                                                                                                                                          |
+| **Secondary Actors**       | System                                                                                                                                         |
+| **Trigger**                | Admin selects "System Monitoring" from the dashboard.                                                                                         |
+
+#### **Description**
+| **Step** | **Action**                                                                                                  |
+|----------|------------------------------------------------------------------------------------------------------------|
+| 1        | Admin navigates to the monitoring dashboard.                                                               |
+| 2        | System displays performance metrics, including server uptime and transaction rates.                                                             |
+| 3        | Admin reviews the metrics for anomalies.                                                                   |
+
+#### **Extensions**
+| **Step** | **Branching Action**                                                                                       |
+|----------|-----------------------------------------------------------------------------------------------------------|
+| 2a       | Metric not available. System displays a notification indicating that specific metrics are temporarily unavailable.                              |
+
+### 2.4 Constraints
