@@ -487,3 +487,57 @@ Below is a list of possible constraints, that the design and implementation of t
 
 ### 3.13 Optional Features
 *Real-time Progress Tracking:* Show real-time statistics of the ongoing voting (for example, votes per proposal) during an election to increase transparency.
+
+
+## 4. System Architecture
+
+### 4.1 System Architecture Diagram
+![](https://lh7-rt.googleusercontent.com/docsz/AD_4nXc-Z4AyWSsaqJNta6UWw77oMBQ3Ez-CC2iBM-Uk9ft4vNjYJbpf2xZr_QzfSBVJ7h20ur4djilRSFZrYHf4MSnOI3vrxjc2txbExja3N8mqXUIt9tWZPsBzJKc2X3I5bUALrP-Sug?key=OPlPKb10dUxl9KW5gTOyK8ZK)
+## 5. High-Level Design
+Blow with these two diagram made by using PlantUML, we show the whole system and its external entities (context diagram) and also showing the system data processing with Data Flow diagram
+### 5.1 Context Diagram
+![](https://lh7-rt.googleusercontent.com/docsz/AD_4nXf61zwNxB4nnUelCT-h6CM75kctfM8MGFfFo7GnSkKrg1K8CMT_HVNFZ6WDBE7VcdSkWo0JOOzQ8tqXLr4vmBG9BLB-GFzsEyYKirbON25rfUh5HQ3YaGfaaLLJrDeoxg7h3LuGBA?key=OPlPKb10dUxl9KW5gTOyK8ZK)
+
+### 5.2 Data Flow Diagram
+![](https://lh7-rt.googleusercontent.com/docsz/AD_4nXejHh9RpOm3B4or05zq-aew8axoL-MYKlBwn8PNFP8aj7CSnlNoTX0nPYrYDNRv9nYxNVMs2buogX8X8vU_g-tVWrd9X3yMGrkLBajUAZeuabf89OZhex-5tJOw3ag7R49bevYF2w?key=OPlPKb10dUxl9KW5gTOyK8ZK)
+
+### 5.3 Class Diagram Draft
+![](https://lh7-rt.googleusercontent.com/docsz/AD_4nXeYBRotXR18piVzH3RrbyVW-MgRjFZP0LNqnR1BgDv1jU7oQVhzNoj_xS-fzVaoMYPFZRjhcz2F0sAX1DsM0Hx08KLNXdA6GkFkG6RXWa7DSDb2sAJ2PkYaZhLot9j9HC6nmXgrsA?key=OPlPKb10dUxl9KW5gTOyK8ZK)
+
+## 6. Preliminary Schedule
+
+### 6.1 Project Plan Tasks
+
+
+| **Task**                | **Start Date** | **End Date**   | **Dependencies**            | **Description**                                |
+|--------------------------|---------------|----------------|-----------------------------|-----------------------------------------------|
+| **Requirement Analysis**     | 01-11-2024    | 15-11-2024     | None                        | Define system objectives.                     |
+| **System Design**            | 16-11-2024    | 25-11-2024     | Requirement Analysis        | Define high-level system architecture.        |
+| **Frontend Development**     | 13-01-2025    | 20-01-2025     | System Design               | Implement React.js dashboards.               |
+| **Blockchain Development**   | 21-01-2025    | 31-01-2025     | System Design               | Build the Python blockchain for vote recording and mining operations. |
+| **Server Development**       | 01-02-2025    | 07-02-2025     | Blockchain & Frontend Dev   | Develop Flask-based Election Server with SQLite database. |
+| **Integration Testing**      | 08-02-2025    | 15-02-2025     | All Development Tasks       | Test the integration of frontend, backend, and blockchain components. |
+| **Final Deployment**         | 16-02-2025    | 20-02-2025     | Integration Testing         | Deploy the system.                            |
+
+
+### 6.2 Requirements
+- Frontend: React.js for all the dashboards.
+- Backend: Flask for the Election server.
+- Blockchain: Python for developing the custom blockchain.
+- Database: SQLite for election and user data storage.
+- Testing Tools: such as Postman
+
+
+### 6.3 Gantt Chart 
+![](https://lh7-rt.googleusercontent.com/docsz/AD_4nXdm6iDzMih8FsfQTgr_XEquoKj_X5GkPyxaOlkY6T8uDE-CJ7ID7pfVlJjomyP06Erru6V-NeczYtNUtyp60aQ8x2fcvviOiqryIjFK73MXSS04iT9Xa2mFrJwVVZH7FOhkU33Uog?key=OPlPKb10dUxl9KW5gTOyK8ZK)
+
+## Appendix
+
+1. A 501(c)(3) tax-exempt, charitable organization, 1100 13th Street, NW, Suite 800, Washington, DC 20005-857-0044. **"Cost of Election," OpenSecrets.**  
+   Available at: [https://www.opensecrets.org/elections-overview/cost-of-election?display=T](https://www.opensecrets.org/elections-overview/cost-of-election?display=T)
+
+2. **"Reducing Voter Registration Costs in France | The Abdul Latif Jameel Poverty Action Lab,"** The Abdul Latif Jameel Poverty Action Lab (J-PAL), 2016.  
+   Available at: [https://www.povertyactionlab.org/evaluation/reducing-voter-registration-costs-france](https://www.povertyactionlab.org/evaluation/reducing-voter-registration-costs-france)
+
+3. Giorgia Bonamoneta. **"Quanto ha speso lo Stato per le elezioni politiche?"** Money.it, September 26, 2022.  
+   Available at: [https://www.money.it/quanto-ha-speso-stato-per-elezioni-politiche](https://www.money.it/quanto-ha-speso-stato-per-elezioni-politiche)
