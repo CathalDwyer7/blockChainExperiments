@@ -1,50 +1,72 @@
 # Functional Specification for blockchain quadratic voting system
 
-1. [Introduction](#1-introduction)  
-   - [Overview](#11-overview)  
-   - [Business Context](#12-business-context)  
-   - [Glossary](#13-glossary)  
-2. [General Description](#2-general-description)  
-   - [Product/System Functions](#21-productsystem-functions)  
-   - [User Characteristics and Objectives](#22-user-characteristics-and-objectives)  
-   - [Operational Scenarios](#23-operational-scenarios)  
-     - [Use Case 1: User Registration/Login](#use-case-1)  
-     - [Use Case 2: Create Election](#use-case-2)  
-     - [Use Case 3: Vote Allocation](#use-case-3)  
-     - [Use Case 4: Display Election Results](#use-case-4)  
-     - [Use Case 5: Reward Miners](#use-case-5)  
-     - [Use Case 6: Monitor Election Progress](#use-case-6)  
-     - [Use Case 7: Detect and Prevent Fraudulent Activity](#use-case-7)  
-     - [Use Case 8: Auditing and Transparency Reporting](#use-case-8)  
-     - [Use Case 9: Proposal Management](#use-case-9)  
-     - [Use Case 10: System Monitoring and Performance Analytics](#use-case-10)  
-   - [Constraints](#24-constraints)  
-3. [Requirements](#3-requirements)  
-   - [Register/Login](#31-registerlogin)  
-   - [Quadratic Voting](#32-quadratic-voting)  
-   - [Election Management](#33-election-management)  
-   - [Vote Casting and Authentication](#34-vote-casting-and-authentication)  
-   - [Vote Counting and Result Display](#35-vote-counting-and-result-display)  
-   - [Privacy and Security Mechanisms](#36-privacy-and-security-mechanisms)  
-   - [Blockchain Integration](#37-blockchain-integration)  
-   - [User Roles and Permissions](#38-user-roles-and-permissions)  
-   - [Proposal Management](#39-proposal-management)  
-   - [Election Results](#310-election-results)  
-   - [Incentive Mechanism for Miners](#311-incentive-mechanism-for-miners)  
-   - [Data Management](#312-data-management)  
-   - [Optional Features](#313-optional-features)  
-4. [System Architecture](#4-system-architecture)  
-   - [System Architecture Diagram](#41-system-architecture-diagram)  
-5. [High-Level Design](#5-high-level-design)  
-   - [Context Diagram](#51-context-diagram)  
-   - [Data Flow Diagram](#52-data-flow-diagram)  
-   - [Class Diagram Draft](#53-class-diagram-draft)  
-6. [Preliminary Schedule](#6-preliminary-schedule)  
-   - [Project Plan Tasks](#61-project-plan-tasks)  
-   - [Requirements](#62-requirements)  
-   - [Gantt Chart](#63-gantt-chart)  
-7. [Appendix](#7-appendix)  
-   - [References](#71-reference)  
+- [Functional Specification for blockchain quadratic voting system](#functional-specification-for-blockchain-quadratic-voting-system)
+  - [1. Introduction](#1-introduction)
+    - [1.1 Overview](#11-overview)
+    - [1.2 Business Context](#12-business-context)
+    - [1.3 Glossary](#13-glossary)
+  - [2. General description](#2-general-description)
+    - [2.1 Product/system functions](#21-productsystem-functions)
+    - [2.2 User Characteristics and Objectives](#22-user-characteristics-and-objectives)
+    - [2.3 Operational Scenarios](#23-operational-scenarios)
+      - [**Use case 1**](#use-case-1)
+      - [**Description**](#description)
+      - [**Extensions**](#extensions)
+      - [**Use case 2**](#use-case-2)
+      - [**Description**](#description-1)
+      - [**Extensions**](#extensions-1)
+      - [**Use case 3**](#use-case-3)
+      - [**Description**](#description-2)
+      - [**Extensions**](#extensions-2)
+      - [**Use case 4**](#use-case-4)
+      - [**Description**](#description-3)
+      - [**Extensions**](#extensions-3)
+  - [| 2a       | Blockchain query failure. The system displays an error message and retries the query.                     |](#-2a--------blockchain-query-failure-the-system-displays-an-error-message-and-retries-the-query---------------------)
+      - [**Use case 5**](#use-case-5)
+      - [**Description**](#description-4)
+      - [**Extensions**](#extensions-4)
+      - [**Use case 6**](#use-case-6)
+      - [**Description**](#description-5)
+      - [**Extensions**](#extensions-5)
+      - [**Use case 7**](#use-case-7)
+      - [**Description**](#description-6)
+      - [**Extensions**](#extensions-6)
+      - [**Use case 8**](#use-case-8)
+      - [**Description**](#description-7)
+      - [**Extensions**](#extensions-7)
+      - [**Use case 9**](#use-case-9)
+      - [**Description**](#description-8)
+      - [**Extensions**](#extensions-8)
+      - [**Use case 10**](#use-case-10)
+      - [**Description**](#description-9)
+      - [**Extensions**](#extensions-9)
+    - [2.4 Constraints](#24-constraints)
+  - [3. Requirements](#3-requirements)
+    - [3.1 Register/Login](#31-registerlogin)
+    - [3.2 Quadratic Voting](#32-quadratic-voting)
+    - [3.3 Election Management](#33-election-management)
+    - [3.4 Vote Casting and Authentication](#34-vote-casting-and-authentication)
+    - [3.5 Vote Counting and Result Display](#35-vote-counting-and-result-display)
+    - [3.6 Privacy and Security Mechanisms](#36-privacy-and-security-mechanisms)
+    - [3.7 Blockchain Integration](#37-blockchain-integration)
+    - [3.8 User Roles and Permissions](#38-user-roles-and-permissions)
+    - [3.9 Proposal Management](#39-proposal-management)
+    - [3.10 Election Results](#310-election-results)
+    - [3.11 Incentive Mechanism for Miners](#311-incentive-mechanism-for-miners)
+    - [3.12 Data Management](#312-data-management)
+    - [3.13 Optional Features](#313-optional-features)
+  - [4. System Architecture](#4-system-architecture)
+    - [4.1 System Architecture Diagram](#41-system-architecture-diagram)
+  - [5. High-Level Design](#5-high-level-design)
+    - [5.1 Context Diagram](#51-context-diagram)
+    - [5.2 Data Flow Diagram](#52-data-flow-diagram)
+    - [5.3 Class Diagram Draft](#53-class-diagram-draft)
+  - [6. Preliminary Schedule](#6-preliminary-schedule)
+    - [6.1 Project Plan Tasks](#61-project-plan-tasks)
+    - [6.2 Requirements](#62-requirements)
+    - [6.3 Gantt Chart](#63-gantt-chart)
+  - [7 Appendix](#7-appendix)
+    - [7.1 Reference](#71-reference)
 
 ----------
 
@@ -52,65 +74,66 @@
 
 ### 1.1 Overview
 
-this project goal is to create a  quadratic voting system based on a custom blockchain, it is designed to use a centralized authentication service (like estoniaid), and a decentralized mining system. to ensure a safe and clear environment for voting.
+Our project goal is to create a  quadratic voting system based on a custom blockchain, it is designed to use a centralized authentication service (like estoniaid), and a decentralized mining system. This will ensure a safe and clear environment for voting.
 
-the system includes three dashboards:
-- user dashboard: allows user to authenticate, view active elections, and vote using quadratic mechanism
-- admin dashboard: allows administrators to create and manage elections, configure candidats, and monitor progress.
-- miner dashboard: allows miners to mine directly from the browser, monitoring mining status and verify accumulated rewards
+The system includes three dashboards:
+- User dashboard: allows user to authenticate, view active elections, and vote using a quadratic voting mechanism
+- Admin dashboard: allows administrators to create and manage elections, configure candidates, and monitor progress.
+- Miner dashboard: allows miners to mine directly from the browser, monitoring mining status and verify accumulated rewards
 
-the blockchain records votes and miner-coins in blocks validated by miners. miners can start and control the mining process only from their dashboard, which evaluates the solution to the pow and sends the valid block to the blockchain. when a miner completes a pow, they get an amount x of miner-conis.
+The blockchain records votes and miner-coins in blocks validated by miners. Miners can start and control the mining process only from their dashboard, which evaluates the solution to the PoW (Proof of Work) and sends the valid block to the blockchain. When a miner completes a PoW, they get an amount x of miner-coins.
 
-an election server (that is our representation and simplification of the estoniaid), manages centralized authentication and provides data about the elections such as candidate names, start / end dates etc. finally a centralized treasury server should convert the rewards accumulated by miners into real money or whatever the country thinks is a suitable reward.
+An election server (that is our representation and simplification of the estoniaid), manages centralized authentication and provides data about the elections such as candidate names, start / end dates etc. Finally a centralized treasury server should convert the rewards accumulated by miners into real money or whatever the country thinks is a suitable reward.
 
-this approach makes the system accessible, secure, and decentralized, balancing technical complexity of the block chain with a nice user-friendly interface.
+This approach makes the system accessible, secure, and decentralized, balancing technical complexity of the block chain with a nice user-friendly interface.
 
 ### 1.2 Business Context 
 
 
-this system can be utilised by european country governments such as italy, that claims to spend around 400 million euro per election. this includes costs for logistics, voting materials, personnel such as scrutineers and election officials, and also infrastructure.
+This system can be utilised by many european governments such as Italy. Italy claims to spend around 400 million euro per election. This includes costs for logistics, voting materials, personnel such as scrutineers and election officials, and also infrastructure. (see 7.1.3)
 
-if we do the maths, italy has 60 million people, let suppose that only 50 million pays taxes and votes, it is (400 / 50) = 8 euros that people pay for each election.
+If we do some basic maths, Italy has 60 million people, let suppose that only 50 million pays taxes and votes as (note this fifty million is very optimistic as Italys voting turnout for both european and general elections has been declining since the 70's hitting a record low 48% as of 2024. This is a part of a global trend across many developing countries see 7.1.4), (400 / 50) = 8 this means each person within in Italy pays on average 8 euros for each election.
 
-in general, traditional elections are resource-intensive, because they require physical assets, a manual verification process, and a lot of people. by transitioning to an online voting system, a lot of money can be saved. for instance:
-- elimination of physical materials: ballots, voting booths, and other supplies.
-- reduced personal costs: automation of processes like voter registration and tallying.
-- simplified logistics: no need to organize physical polling stations or transport materials.
+In general, traditional elections are resource-intensive, because they require physical assets, a manual verification process, and a lot of people. by transitioning to an online voting system, a lot of tax payer money can be saved. For instance:
+- Elimination of physical materials: ballots, voting booths, and other supplies.
+- Reduced personal costs: automation of processes like voter registration and tallying.
+- Simplified logistics: no need to organize physical polling stations or transport materials.
 
-this blockchain-based system offers immutable and clear data that aligns with the requirements of a democratic system. the implementation of this system could save millions of euros per election cycle, while increasing accessibility for citizens, including those with mobility challenges.
+This blockchain-based system offers immutable and clear data that aligns with the requirements of a democratic system. the implementation of this system could save millions of euros per election cycle, while increasing accessibility for citizens, including those with mobility challenges. 
+
 
 ### 1.3 Glossary
 
-- **blockchain**: a decentralised, immutable ledger.
-- **quadratic voting**: voting method that allows users to cast multiple votes with a quadratic cost increase.
-- **estonian e-id system**: digital identification technology used for voter verification.
-- **pow**: proof of work, a consensus mechanism.
-- **miner-coins**: it is the reward for the mine that complete the pow, (this can can’t be exchanged with other users, but just with the country that decides how much it is worth)
+- **Blockchain**: a decentralised, immutable ledger.
+- **Quadratic voting**: voting method that allows users to cast multiple votes with a quadratic cost increase.
+- **Estonian e-id system**: digital identification technology used for voter verification.
+- **PoW**: proof of work, a consensus mechanism.
+- **Miner-coins**: it is the reward for the mine that complete the pow, (this can can’t be exchanged with other users, but just with the country that decides how much it is worth)
 
 ## 2. General description
 
 ### 2.1 Product/system functions 
 
-the system general functions are as follows:
+The systems general functions are as follows:
 
 - **User management**
-  - voter auth: enables voters to use a centralised service (e.g. estoniaid) for authentication.
-  - administrator access: gives admin the possibility to oversee elections, choose candidates names, and review results.
-  - miner auth: provides a dashboard for miners to participate in pow and get rewards.
+  - Voter auth: enables voters to use a centralised service (e.g. estoniaid) for authentication.
+  - Administrator access: gives admin the possibility to oversee elections, choose candidates names, and review results.
+  - Miner auth: provides a dashboard for miners to participate in pow and get rewards.
 
 - **Election management**
-  - election creation: admin can create elections and define candidates information.
-  - election data management: stores and manages election data securely in a centralised database.
+  - Election creation: admin can create elections and define candidates information.
+  - Election data management: stores and manages election data securely in a centralised database.
 
 - **Voting process**
-  - quadratic voting: implements quadratic voting logic, allowing voters to vote their favourite candidates, with the cost of votes increasing quadratically.
-  - voter submission: submits votes to the blockchain for immutable recording.
-  - real-time validation: validates votes using the blockchain.
+  - Quadratic voting: implements quadratic voting logic, allowing voters to vote their favourite candidates, with the cost of votes increasing quadratically.
+  - Voter submission: submits votes to the blockchain for immutable recording.
+  - Real-time validation: validates votes using the blockchain.
 
 - **Mining**
-  - mining interface: provides miners their dashboard to start mine from the browser.
-  - block validation: checks validity of votes and adds new blocks to the blockchain.
-  - rewards system: handle the rewards for the miners.
+  - Mining interface: provides miners their dashboard to start mine from the browser.
+  - Block validation: checks validity of votes and adds new blocks to the blockchain.
+  - Rewards system: handle the rewards for the miners.
 
 - **Blockchain integration**
   - Immutable Record: stores a ledger of votes and transactions (miner-coins)
@@ -133,7 +156,7 @@ The user community for this project can be split into three categories: voters, 
   - Characteristics
     - Citizens eligible to vote
     - No technical knowledge of blockchain
-    - Expected to have a basic digital understanding, such as ability to use a website
+    - Expected to have a basic digital understanding, such as ability to sign on to a website and ability to cast a vote
   - Objective
     - Vote in a user-friendly environment
     - View elections and their voting history
@@ -591,3 +614,6 @@ Blow with these two diagram made by using PlantUML, we show the whole system and
 
 3. Giorgia Bonamoneta. **"Quanto ha speso lo Stato per le elezioni politiche?"** Money.it, September 26, 2022.  
    Available at: [https://www.money.it/quanto-ha-speso-stato-per-elezioni-politiche](https://www.money.it/quanto-ha-speso-stato-per-elezioni-politiche)
+
+3. **"Share of registered Italian electors who voted in general and European elections from 1946 to 2024"** Statista data and intelligence platform, August 30, 2024.  
+   Available at: [https://www.statista.com/statistics/581392/elections-turnout-italy/](https://www.statista.com/statistics/581392/elections-turnout-italy/)
