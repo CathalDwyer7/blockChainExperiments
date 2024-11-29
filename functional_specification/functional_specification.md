@@ -92,7 +92,7 @@ This approach makes the system accessible, secure, and decentralized, balancing 
 
 This system can be utilised by many european governments such as Italy. Italy claims to spend around 400 million euro per election. This includes costs for logistics, voting materials, personnel such as scrutineers and election officials, and also infrastructure. (see 7.1.3)
 
-If we do some basic maths, Italy has 60 million people, let suppose that only 50 million pays taxes and votes as (note this fifty million is very optimistic as Italys voting turnout for both european and general elections has been declining since the 70's hitting a record low 48% as of 2024. This is a part of a global trend across many developing countries see 7.1.4), (400 / 50) = 8 this means each person within in Italy pays on average 8 euros for each election.
+If we do some basic maths, Italy has 60 million people, let suppose that only 50 million pays taxes and votes as (note this fifty million is very optimistic as Italys voting turnout for both european and general elections has been declining since the 70's hitting a record low 48% as of 2024.(see 7.1.4) This is a part of a global trend across many developing countries (see 7.1.5), (400 / 50) = 8 this means each person within in Italy pays on average 8 euros for each election.
 
 In general, traditional elections are resource-intensive, because they require physical assets, a manual verification process, and a lot of people. by transitioning to an online voting system, a lot of tax payer money can be saved. For instance:
 - Elimination of physical materials: ballots, voting booths, and other supplies.
@@ -615,5 +615,8 @@ Blow with these two diagram made by using PlantUML, we show the whole system and
 3. Giorgia Bonamoneta. **"Quanto ha speso lo Stato per le elezioni politiche?"** Money.it, September 26, 2022.  
    Available at: [https://www.money.it/quanto-ha-speso-stato-per-elezioni-politiche](https://www.money.it/quanto-ha-speso-stato-per-elezioni-politiche)
 
-3. **"Share of registered Italian electors who voted in general and European elections from 1946 to 2024"** Statista data and intelligence platform, August 30, 2024.  
+4. **"Share of registered Italian electors who voted in general and European elections from 1946 to 2024"** Statista data and intelligence platform, August 30, 2024.  
    Available at: [https://www.statista.com/statistics/581392/elections-turnout-italy/](https://www.statista.com/statistics/581392/elections-turnout-italy/)
+
+5. **"The Generational and Institutional Sources of the Global Decline in Voter Turnout"** by Filip Kostelka and André Blais, published in World Politics (Volume 73, Issue 4, October 2021).  
+   Available at: [https://www.cambridge.org/core/journals/world-politics/article/abs/generational-and-institutional-sources-of-the-global-decline-in-voter-turnout/B9EB23098C2A905FECA7072C384CD34F?form=MG0AV3](https://www.cambridge.org/core/journals/world-politics/article/abs/generational-and-institutional-sources-of-the-global-decline-in-voter-turnout/B9EB23098C2A905FECA7072C384CD34F?form=MG0AV3)
