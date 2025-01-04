@@ -8,6 +8,10 @@ const Dashboard = () => {
     { id: 2, title: 'City Council Election', status: 'Ongoing' },
   ];
 
+  const handleVote = (id) => {
+    navigate(`/vote/${id}`);
+  };
+
   const handleViewResults = (id) => {
     navigate(`/results/${id}`);
   };
@@ -20,6 +24,9 @@ const Dashboard = () => {
           <li key={election.id}>
             <h3>{election.title}</h3>
             <p>Status: {election.status}</p>
+            {election.status === 'Ongoing' && (
+              <button onClick={() => handleVote(election.id)}>Vote</button>
+            )}
             {election.status === 'Ended' && (
               <button onClick={() => handleViewResults(election.id)}>
                 View Results
