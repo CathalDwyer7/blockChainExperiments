@@ -8,7 +8,7 @@ alias deactivate 'test $?_OLD_VIRTUAL_PATH != 0 && setenv PATH "$_OLD_VIRTUAL_PA
 # Unset irrelevant variables.
 deactivate nondestructive
 
-setenv VIRTUAL_ENV /home/dwyerc24/3rdProject/2025-csc1049-cdwyer-blockchain-quadratic-voting-system/code/backend/venv
+setenv VIRTUAL_ENV /home/dwyerc24/3rdProject/2025-csc1049-cdwyer-blockchain-quadratic-voting-system/code/blockchain-voting-system/backend/venv
 
 set _OLD_VIRTUAL_PATH="$PATH"
 setenv PATH "$VIRTUAL_ENV/"bin":$PATH"

@@ -33,7 +33,7 @@ end
 # Unset irrelevant variables.
 deactivate nondestructive
 
-set -gx VIRTUAL_ENV /home/dwyerc24/3rdProject/2025-csc1049-cdwyer-blockchain-quadratic-voting-system/code/backend/venv
+set -gx VIRTUAL_ENV /home/dwyerc24/3rdProject/2025-csc1049-cdwyer-blockchain-quadratic-voting-system/code/blockchain-voting-system/backend/venv
 
 set -gx _OLD_VIRTUAL_PATH $PATH
 set -gx PATH "$VIRTUAL_ENV/"bin $PATH

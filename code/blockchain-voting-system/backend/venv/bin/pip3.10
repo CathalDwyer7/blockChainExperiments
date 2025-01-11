@@ -1,4 +1,6 @@
-#!/home/dwyerc24/3rdProject/2025-csc1049-cdwyer-blockchain-quadratic-voting-system/code/backend/venv/bin/python3
+#!/bin/sh
+'''exec' /home/dwyerc24/3rdProject/2025-csc1049-cdwyer-blockchain-quadratic-voting-system/code/blockchain-voting-system/backend/venv/bin/python3 "$0" "$@"
+' '''
 # -*- coding: utf-8 -*-
 import re
 import sys
