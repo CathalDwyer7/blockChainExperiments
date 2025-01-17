@@ -13,7 +13,7 @@ def get_elections():
         'title': election.title,
         'status': election.status,
         'created_at': election.created_at.isoformat()
-    } for election in elections])
+    } for election in elections]), 200
 
 @election_routes.route('/', methods=['POST'])
 @jwt_required()

@@ -5,6 +5,21 @@ from extensions import db
 
 auth_routes = Blueprint('auth', __name__)
 
+@auth_routes.route('/register', methods=['POST'])
+def register():
+    data = request.get_json()
+    username = data.get('username')
+    password = data.get('password')
+    role = data.get('role', 'voter')
+
+    if User.query.filter_by(username=username).first():
+        return jsonify({'error': 'Username already exists'}), 400
+
+    new_user = User(username=username, password=password, role=role)
+    db.session.add(new_user)
+    db.session.commit()
+    return jsonify({'message': 'User registered successfully'}), 201
+
 @auth_routes.route('/login', methods=['POST'])
 def login():
     data = request.get_json()
