@@ -29,23 +29,28 @@ def create_election():
     db.session.commit()
     return jsonify({'message': 'Election created successfully'}), 201
 
+from blockchain import blockchain
+
 @election_routes.route('/vote', methods=['POST'])
 @jwt_required()
 def submit_vote():
-    data = request.get_json()
     current_user = get_jwt_identity()
+    data = request.get_json()
 
-    election = Election.query.get(data.get('election_id'))
+    # Validate input
+    if not data or 'election_id' not in data or 'votes' not in data:
+        return jsonify({'error': 'Invalid request, election_id and votes are required'}), 400
+
+    # Check if the election exists
+    election = Election.query.get(data['election_id'])
     if not election:
         return jsonify({'error': 'Election not found'}), 404
 
-    new_vote = Vote(
-        election_id=data.get('election_id'),
-        user_id=current_user['id'],
-        proposal=data.get('proposal'),
-        votes=data.get('votes')
-    )
-    db.session.add(new_vote)
-    db.session.commit()
-    return jsonify({'message': 'Vote submitted successfully'}), 201
+    # Ensure election is open for voting
+    if election.status.lower() != 'ongoing':
+        return jsonify({'error': 'Voting is not allowed for this election'}), 400
 
+    # Add the vote transaction to the blockchain
+    voter_id = current_user['id']
+    blockchain.add_transaction(voter_id, data['election_id'], data['votes'])
+    return jsonify({'message': 'Vote submitted successfully'}), 201
