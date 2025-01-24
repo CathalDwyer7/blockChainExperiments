@@ -27,6 +27,9 @@ from routes.elections import election_routes
 app.register_blueprint(auth_routes, url_prefix='/api/auth')
 app.register_blueprint(election_routes, url_prefix='/api/elections')
 
+with app.app_context():
+    db.create_all()
+    
 if __name__ == '__main__':
     app.run(debug=True)
 

@@ -43,7 +43,7 @@ def generate_paillier_keypair(key_size=512):
     lambda_val = lcm(p - 1, q - 1)
     g = n + 1
     mu = pow(lambda_val, -1, n)
-    return (n, g), (lambda_val, mu, n)
+    return (int(n), int(g)), (int(lambda_val), int(mu), int(n))
 
 # Encryption
 def encrypt(m, public_key):
@@ -56,5 +56,14 @@ def encrypt(m, public_key):
 def decrypt(c, private_key):
     lambda_val, mu, n = private_key
     n_sq = n ** 2
+
+    # Ensure all values are integers
+    c = int(c)
+    lambda_val = int(lambda_val)
+    mu = int(mu)
+    n = int(n)
+    n_sq = int(n_sq)
+
+    # Perform decryption
     l = (pow(c, lambda_val, n_sq) - 1) // n
     return (l * mu) % n
