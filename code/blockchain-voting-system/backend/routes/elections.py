@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify, request
 from flask_jwt_extended import jwt_required, get_jwt_identity
-from models import Election
+from models import Election, User
 from extensions import db
 from blockchain import Blockchain
 
@@ -34,7 +34,13 @@ def create_election():
     new_election = Election(title=data.get('title'), status='Upcoming')
     db.session.add(new_election)
     db.session.commit()
-    return jsonify({'message': 'Election created successfully'}), 201
+    
+    return jsonify({'id': new_election.id,
+                   'title': new_election.title,
+                   'status': new_election.status,
+                   'created_at': new_election.created_at.isoformat()
+                   }), 201
+    # {'message': 'Election created successfully'}
 
 
 @election_routes.route('/vote', methods=['POST'])
@@ -44,7 +50,7 @@ def submit_vote():
 
         current_user = get_jwt_identity()
         data = request.get_json()
-        
+
         print(f"Current User: {current_user}")
         print(f"Request Data: {data}")
 
@@ -52,41 +58,59 @@ def submit_vote():
         if 'election_id' not in data or 'votes' not in data or 'proposal' not in data:
             return jsonify({'error': 'Invalid request. election_id, votes, and proposal are required'}), 400
 
+        # Fetch the voter from the database
+        voter = db.session.get(User, current_user['id'])
+        if not voter:
+            return jsonify({'error': 'Voter not found'}), 404
+        
         # Check if the election exists
-        election = Election.query.get(data['election_id'])
+        election = db.session.get(Election, data['election_id'])
         if not election:
             return jsonify({'error': 'Election not found'}), 404
 
         # Ensure election is open for voting
         if election.status.lower() != 'ongoing':
             return jsonify({'error': 'Voting is not allowed for this election'}), 400
-  
+
+        # Quadratic cost calculation
+        votes = int(data['votes'])
+        quadratic_cost = votes ** 2
+
+        # Check if the voter has enough credits
+        if quadratic_cost > voter.credits:
+            return jsonify({'error': 'Insufficient credits to cast these votes'}), 400
+
+        # Deduct credits and store the vote
+        voter.credits -= quadratic_cost
+        if voter.credits < 0:
+            voter.credits = 0  # Reset to 0 if credits drop below 0
+        db.session.commit()  # Save the changes to the database
+
         # Add the vote transaction to the blockchain
-        print("Adding transaction to blockchain...")
+        # print("Adding transaction to blockchain...")
         blockchain.add_transaction(
-           voter_id=current_user['id'],
+            voter_id=current_user['id'],
             election_id=data['election_id'],
             votes=data['votes'],
             proposal=data['proposal']
         )
-        print("Transaction added:", blockchain.current_transactions)
+        # print("Transaction added:", blockchain.current_transactions)
 
         # Automatically create a block after every transaction for simplicity
         blockchain.create_block(previous_hash=blockchain.chain[-1]["hash"])
         print("Block created:", blockchain.chain[-1])
-        
-        return jsonify({'message': 'Vote submitted successfully'}), 201
 
+        return jsonify({'message': 'Vote submitted successfully'}), 201
 
     except Exception as e:
         print(f"Error during vote submission: {e}")
-        return jsonify({'error':'Internal Server Error'}), 500
+        return jsonify({'error': 'Internal Server Error'}), 500
 
 
 @election_routes.route('/results/<int:election_id>', methods=['GET'])
 def get_results(election_id):
     try:
-        print(f"Blockchain Transactions: {blockchain.chain}")  # Debugging
+        # print(f"Blockchain Transactions: {blockchain.chain}")  # Debugging
         results = blockchain.tally_votes(election_id)
         return jsonify({
             'election_id': election_id,
@@ -115,7 +139,7 @@ def update_election_status(election_id):
         return jsonify({'error': 'Invalid status'}), 400
 
     # Find the election
-    election = Election.query.get(election_id)
+    election = db.session.get(Election, election_id)
     if not election:
         return jsonify({'error': 'Election not found'}), 404
 

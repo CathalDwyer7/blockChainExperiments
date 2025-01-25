@@ -48,6 +48,8 @@ class Blockchain:
             'voter_id': voter_id,
             'election_id': election_id,
             "proposal": proposal,
+            'votes': votes,
+            'quadratic_cost': votes ** 2,
             'encrypted_vote': encrypted_vote,
             'signature': unblinded_signature,
         })
