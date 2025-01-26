@@ -1,0 +1,9 @@
+# ignore venv in any folder
+**/env/
+**/venv/
+
+# ignore python byte cache in any folder
+**/__pycache__/
+
+# ignore all compiled python files
+**/*.pyc
