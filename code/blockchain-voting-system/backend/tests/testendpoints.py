@@ -1,7 +1,6 @@
 import pytest
-import json
 from app import app, db
-from models import User, Election
+from models import User
 from werkzeug.security import generate_password_hash
 
 @pytest.fixture

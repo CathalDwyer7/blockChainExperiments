@@ -6,19 +6,19 @@ from werkzeug.security import generate_password_hash, check_password_hash
 
 auth_routes = Blueprint('auth', __name__)
 
-DEFAULT_ADMIN_USERNAME = 'admin'
-DEFAULT_ADMIN_PASSWORD = 'admin123'
+ADMIN_KEY = "default_admin_key"
 
 @auth_routes.route('/register', methods=['POST'])
 def register():
     """
     Allows users to register. Role is restricted to 'voter' unless explicitly set as 'admin' 
-    by someone who knows the default credentials.
+    by someone who knows the default key.
     """
     data = request.get_json()
     username = data.get('username')
     password = data.get('password')
     role = data.get('role', 'voter')
+    key = data.get('key', '')
 
     if not username or not password:
         return jsonify({'error': 'Username and password are required'}), 400
@@ -26,15 +26,9 @@ def register():
     if User.query.filter_by(username=username).first():
         return jsonify({'error': 'Username already exists'}), 400
 
-    # Only allow admin registration with default admin credentials
-    if role == 'admin':
-        admin_username = data.get('admin_username')
-        admin_password = data.get('admin_password')
+    if role == "admin" and key != ADMIN_KEY:
+        return jsonify({'error': 'Error the admin key is incorrect'}), 400
 
-        if admin_username != DEFAULT_ADMIN_USERNAME or admin_password != DEFAULT_ADMIN_PASSWORD:
-            return jsonify({'error': 'Unauthorized to register as admin'}), 403
-
-    # Hash the password for secure storage
     hashed_password = generate_password_hash(password)
     
     new_user = User(username=username, password=hashed_password, role=role)

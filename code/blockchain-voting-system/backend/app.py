@@ -2,9 +2,11 @@ from flask import Flask
 from flask_cors import CORS
 from dotenv import load_dotenv
 import os
-
 # Import extensions
 from extensions import db, jwt
+
+DEFAULT_ADMIN_USERNAME = 'admin'
+DEFAULT_ADMIN_PASSWORD = 'admin123'
 
 load_dotenv()
 
