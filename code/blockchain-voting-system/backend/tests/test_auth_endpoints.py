@@ -2,13 +2,10 @@ import pytest
 from app import app, db
 from models import Election
 
-# Configure a test database
-TEST_DATABASE_URI = 'sqlite:///test_db.sqlite'
-
 @pytest.fixture(scope="function")
 def test_client():
     app.config['TESTING'] = True
-    app.config['SQLALCHEMY_DATABASE_URI'] = TEST_DATABASE_URI
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test_db.sqlite'
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
     with app.test_client() as testing_client:
@@ -17,6 +14,7 @@ def test_client():
             yield testing_client
             db.session.remove()
             db.drop_all()
+
 
 # data base and cleaning between each test checkes 
 def test_data_base_integrity(test_client):
@@ -66,7 +64,8 @@ def test_register_admin_wrong_key(test_client):
     assert response.status_code == 400 
     assert response.get_json()['error'] == 'Error the admin key is incorrect'
 
-## "/login" endpoint checkes 
+
+#  "/login" endpoint checkes 
 def helper_login_user(client, username, password):
     response = client.post('/api/auth/login', json={
         'username': username,
@@ -87,56 +86,25 @@ def test_login_user_wrong_password(test_client):
     assert response.status_code == 401
     assert response.get_json()['error'] == 'Invalid credentials'
 
-#def test_create_election(test_client):
-#    admin_token = login_user(test_client, 'admin', 'admin123')
-#
-#    # Admin creates an election
-#    response = test_client.post('/api/elections/', json={
-#        'title': 'Presidential Election 2025'
-#    }, headers={
-#        'Authorization': f'Bearer {admin_token}'
-#    })
-#    assert response.status_code == 201
-#    assert response.get_json()['message'] == 'Election created successfully'
-#
-#    # Voter tries to create an election
-#    voter_token = login_user(test_client, 'voter', 'voter123')
-#    response = test_client.post('/api/elections/', json={
-#        'title': 'Unauthorized Election'
-#    }, headers={
-#        'Authorization': f'Bearer {voter_token}'
-#    })
-#    assert response.status_code == 403
-#    assert response.get_json()['error'] == 'Unauthorized'
-#
-#def test_get_elections(test_client):
-#    response = test_client.get('/api/elections/')
-#    assert response.status_code == 200
-#    elections = response.get_json()
-#    assert len(elections) == 1
-#    assert elections[0]['title'] == 'Presidential Election 2025'
-#
-#def test_submit_vote(test_client):
-#    voter_token = login_user(test_client, 'voter', 'voter123')
-#
-#    # Voter submits a vote
-#    response = test_client.post('/api/elections/vote', json={
-#        'election_id': 1,
-#        'proposal': 'Proposal A',
-#        'votes': 4
-#    }, headers={
-#        'Authorization': f'Bearer {voter_token}'
-#    })
-#    assert response.status_code == 201
-#    assert response.get_json()['message'] == 'Vote submitted successfully'
-#
-#    # Voting for a non-existent election
-#    response = test_client.post('/api/elections/vote', json={
-#        'election_id': 999,
-#        'proposal': 'Nonexistent Proposal',
-#        'votes': 1
-#    }, headers={
-#        'Authorization': f'Bearer {voter_token}'
-#    })
-#    assert response.status_code == 404
-#    assert response.get_json()['error'] == 'Election not found'
+
+#  "/protected" endpoint checks to test jwt decortor
+def test_protected_endpoint(test_client):
+    _ = helper_register_user(test_client, 'peppe', '12345')
+    _, access_token = helper_login_user(test_client, 'peppe', '12345')
+    access_headers = {"Authorization": "Bearer {}".format(access_token)} 
+    response = test_client.get('api/auth/protected', headers=access_headers)
+    assert response.status_code == 200
+    #print(response.get_json())
+
+def test_protected_endpoint_no_token(test_client):
+    response = test_client.get('api/auth/protected')
+    assert response.status_code == 401 
+    assert response.get_json()['msg'] == 'Missing Authorization Header'
+
+
+def test_protected_endpoint_fake_token(test_client):
+    fake_token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjEyMzQ1Iiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNjc3MDAwMDAwLCJleHAiOjE2NzcwMzYwMDB9.VP9l65bWbUj9QFsuqZTUbGFd5wVk3TA5-QeRlsuTQ6Y"
+    access_headers = {"Authorization": "Bearer {}".format(fake_token)} 
+    response = test_client.get('api/auth/protected', headers=access_headers)
+    assert response.status_code == 422
+    assert response.get_json()['msg'] == "Signature verification failed"

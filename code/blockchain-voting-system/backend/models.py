@@ -12,5 +12,3 @@ class Election(db.Model):
     title = db.Column(db.String(120), nullable=False)
     status = db.Column(db.String(20), nullable=False)
     created_at = db.Column(db.DateTime, default=db.func.current_timestamp())
-
-

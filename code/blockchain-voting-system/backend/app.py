@@ -5,9 +5,6 @@ import os
 # Import extensions
 from extensions import db, jwt
 
-DEFAULT_ADMIN_USERNAME = 'admin'
-DEFAULT_ADMIN_PASSWORD = 'admin123'
-
 load_dotenv()
 
 app = Flask(__name__)
@@ -16,7 +13,8 @@ CORS(app)
 # Configure the database and JWT
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db.sqlite'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY', 'default_secret_key')
+app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY', 'secret_key')
+
 
 # Initialize extensions
 db.init_app(app)

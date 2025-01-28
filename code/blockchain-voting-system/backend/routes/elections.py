@@ -8,7 +8,8 @@ election_routes = Blueprint('elections', __name__)
 blockchain = Blockchain()
 
 
-@election_routes.route('/', methods=['GET'])
+@election_routes.route('/get_elections', methods=['GET'])
+@jwt_required()
 def get_elections():
     elections = Election.query.all()
     return jsonify([{
@@ -19,7 +20,7 @@ def get_elections():
     } for election in elections]), 200
 
 
-@election_routes.route('/', methods=['POST'])
+@election_routes.route('/create_election', methods=['POST'])
 @jwt_required()
 def create_election():
     data = request.get_json()
@@ -34,13 +35,13 @@ def create_election():
     new_election = Election(title=data.get('title'), status='Upcoming')
     db.session.add(new_election)
     db.session.commit()
-    
-    return jsonify({'id': new_election.id,
-                   'title': new_election.title,
-                   'status': new_election.status,
-                   'created_at': new_election.created_at.isoformat()
-                   }), 201
-    # {'message': 'Election created successfully'}
+   
+    data = {'id': new_election.id,
+            'title': new_election.title,
+            'status': new_election.status,
+            'created_at': new_election.created_at.isoformat()
+    }
+    return jsonify(data), 201
 
 
 @election_routes.route('/vote', methods=['POST'])

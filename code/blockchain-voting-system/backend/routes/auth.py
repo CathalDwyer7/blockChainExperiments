@@ -3,6 +3,7 @@ from flask_jwt_extended import create_access_token
 from models import User
 from extensions import db
 from werkzeug.security import generate_password_hash, check_password_hash
+from flask_jwt_extended import jwt_required, get_jwt_identity
 
 auth_routes = Blueprint('auth', __name__)
 
@@ -53,3 +54,9 @@ def login():
     access_token = create_access_token(identity={'id': user.id, 'role': user.role})
     return jsonify({'access_token': access_token}), 200
 
+
+@auth_routes.route('/protected', methods=['GET'])
+@jwt_required()
+def protected():
+    current_user = get_jwt_identity()
+    return jsonify(logged_in_as=current_user), 200
