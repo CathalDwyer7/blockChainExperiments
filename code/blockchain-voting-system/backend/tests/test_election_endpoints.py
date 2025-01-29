@@ -1,3 +1,5 @@
+# pytest -s -p no:warnings tests/test_election_endpoints.py
+# run with this command bc datetime.utc is deprecated and we need to change it later
 from datetime import datetime, timedelta
 import pytest
 from app import app, db
@@ -43,6 +45,10 @@ def helper_get_user_headers(test_client):
     _, access_token = helper_login_user(test_client, 'peppe', 'pass')
     return {"Authorization": "Bearer {}".format(access_token)}
 
+def helper_get_admin_headers(test_client):
+    _ = helper_register_user(test_client, 'peppe', 'pass','default_admin_key')
+    _, access_token = helper_login_user(test_client, 'peppe', 'pass')
+    return {"Authorization": "Bearer {}".format(access_token)}
 
 # get all elections checkes 
 def test_get_elections(test_client):
@@ -55,26 +61,60 @@ def test_get_elections(test_client):
     assert elections[0]['title'] == 'Something'
 
 
-#def test_create_election(test_client):
-#    user, password, role, key  = 'peppe', '12345', 'admin','default_admin_key' 
-#    
-#    response = helper_register_user(test_client, user, password, role, key)
-#    assert response.status_code == 201
-#
-#    response, token = helper_login_user(test_client, user, password)
-#    assert response.status_code == 200
-#
-#    response = test_client.post(
-#        '/api/elections/create_election', 
-#        json = {
-#        'title': 'Presidential Election 2025'
-#        },
-#        headers = {
-#        'Authorization': f'Bearer {token}'
-#        }
-#    )
-#    assert response.status_code == 201
-#    #assert response.get_json()['message'] == 'Election created successfully'
+
+def test_create_election(test_client):
+    access_headers = helper_get_admin_headers(test_client)
+    endpoint = '/api/elections/create_election'
+    start_unix = int(datetime.utcnow().timestamp())
+    end_unix = int((datetime.utcnow() + timedelta(hours=2)).timestamp())
+    data = {
+        'title':"Something", 
+        'start_credits':10, 
+        'start_date':start_unix,
+        'end_date':end_unix,
+        'description':"Some kind of election",
+    }
+
+    response = test_client.post(endpoint, json=data, headers=access_headers)
+    assert response.status_code == 201
+
+def test_create_election_with_no_permission(test_client):
+    access_headers = helper_get_user_headers(test_client)
+    endpoint = '/api/elections/create_election'
+    start_unix = int(datetime.utcnow().timestamp())
+    end_unix = int((datetime.utcnow() + timedelta(hours=2)).timestamp())
+    data = {
+        'title':"Something", 
+        'start_credits':10, 
+        'start_date':start_unix,
+        'end_date':end_unix,
+        'description':"Some kind of election",
+    }
+
+    response = test_client.post(endpoint, json=data, headers=access_headers)
+    assert response.status_code == 403
+
+def test_create_election_with_candidates(test_client):
+    access_headers = helper_get_admin_headers(test_client)
+    endpoint = '/api/elections/create_election'
+    start_unix = int(datetime.utcnow().timestamp())
+    end_unix = int((datetime.utcnow() + timedelta(hours=2)).timestamp())
+    data = {
+        'title':"Something", 
+        'start_credits':10, 
+        'start_date':start_unix,
+        'end_date':end_unix,
+        'description':"Some kind of election",
+        'candidates': [
+            {'name':'mario', 'description': 'left guy'},
+            {'name':'cesare', 'description': 'right guy'}
+        ]
+    }
+
+    response = test_client.post(endpoint, json=data, headers=access_headers)
+    print(response.get_json())
+    assert response.status_code == 201
+
 
 
 

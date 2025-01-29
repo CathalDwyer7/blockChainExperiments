@@ -1,3 +1,4 @@
+from functools import wraps
 from flask import Blueprint, jsonify, request
 from flask_jwt_extended import create_access_token
 from models import User 
@@ -59,3 +60,21 @@ def login():
 def protected():
     current_user = get_jwt_identity()
     return jsonify(logged_in_as=current_user), 200 #{'logged_in_as': {'id': 1, 'is_admin': False}}
+
+
+# usfull decorator
+def admin_required(fn):
+    """
+    Custom decorator to check if the user is admin 
+    """
+    @wraps(fn)
+    @jwt_required()
+    def decorated_function(*args, **kwargs):
+        current_user = get_jwt_identity()
+
+        if not current_user['is_admin']:
+            return jsonify({'error': 'Unauthorized'}), 403
+
+        return fn(*args, **kwargs)
+    
+    return decorated_function
