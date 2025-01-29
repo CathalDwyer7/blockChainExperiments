@@ -1,6 +1,7 @@
+from datetime import datetime, timedelta
 import pytest
 from app import app, db
-from models import Election
+from models import Election, Candidates
 from .test_auth_endpoints import helper_login_user, helper_register_user
 
 @pytest.fixture(scope="function")
@@ -17,28 +18,41 @@ def test_client():
             db.drop_all()
 
 
-# get all elections checkes 
-def test_get_elections(test_client):
-    tmp1 = Election(title="tmp1 election", status="Open")
-    tmp2 = Election(title="tmp2 election", status="Open")
-    db.session.add(tmp1)
-    db.session.add(tmp2)
+def helper_create_election():
+    start_unix = int(datetime.utcnow().timestamp())
+    end_unix = int((datetime.utcnow() + timedelta(hours=2)).timestamp())
+
+    tmp = Election(
+        title="Something", 
+        start_credits=10, 
+        start_date=start_unix,
+        end_date=end_unix,
+        description="Some kind of election",
+    )
+    db.session.add(tmp)
     db.session.commit()
 
-    response = helper_register_user(test_client, 'peppe', 'pass')
-    response, access_token = helper_login_user(test_client, 'peppe', 'pass')
-    access_headers = {"Authorization": "Bearer {}".format(access_token)}
+    cand1 = Candidates(election_id=tmp.id, name='cand1', description='desc1')
+    cand2 = Candidates(election_id=tmp.id, name='cand2', description='desc2')
 
+    db.session.add_all([cand1,cand2])
+    db.session.commit()
+
+def helper_get_user_headers(test_client):
+    _ = helper_register_user(test_client, 'peppe', 'pass')
+    _, access_token = helper_login_user(test_client, 'peppe', 'pass')
+    return {"Authorization": "Bearer {}".format(access_token)}
+
+
+# get all elections checkes 
+def test_get_elections(test_client):
+    helper_create_election()
+    access_headers = helper_get_user_headers(test_client)
     response = test_client.get('/api/elections/get_elections', headers=access_headers)
-
-    print(f"token : {access_token}")
-    print(f"response : {response.get_json()}")
-
     assert response.status_code == 200
     elections = response.get_json()
-    assert len(elections) == 2
-    assert elections[0]['title'] == 'tmp1 election'
-    assert elections[1]['title'] == 'tmp2 election'
+    assert len(elections) == 1
+    assert elections[0]['title'] == 'Something'
 
 
 #def test_create_election(test_client):

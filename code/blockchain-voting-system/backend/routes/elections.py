@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify, request
 from flask_jwt_extended import jwt_required, get_jwt_identity
-from models import Election, User
+from models import Election, User, Candidates
 from extensions import db
 from blockchain import Blockchain
 
@@ -12,13 +12,25 @@ blockchain = Blockchain()
 @jwt_required()
 def get_elections():
     elections = Election.query.all()
-    return jsonify([{
-        'id': election.id,
-        'title': election.title,
-        'status': election.status,
-        'created_at': election.created_at.isoformat()
-    } for election in elections]), 200
+    data = []
+    for election in elections:
+        candidates = Candidates.query.filter_by(election_id=election.id).all()
+        data.append({
+            'id': election.id,
+            'title': election.title,
+            'start_credits': election.start_credits,
+            'start_date': election.start_date,
+            'end_date': election.end_date,
+            'description': election.description,
+            'status': election.status.value,
+            'candidates': [{
+                'id': candidat.id,
+                'name': candidat.name,
+                'description': candidat.description,
+            } for candidat in candidates],
+        })
 
+    return jsonify(data), 200
 
 @election_routes.route('/create_election', methods=['POST'])
 @jwt_required()
