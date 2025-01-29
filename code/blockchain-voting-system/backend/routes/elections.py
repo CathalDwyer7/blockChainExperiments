@@ -33,6 +33,34 @@ def get_elections():
 
     return jsonify(data), 200
 
+
+@election_routes.route('/get_election/<int:id>', methods=['GET'])
+@jwt_required()
+def get_election_by_id(id):
+    election = Election.query.get(id)
+
+    if election is None:
+        return jsonify({'error': 'Election not found'}), 404 
+
+    candidates = Candidates.query.filter_by(election_id=election.id).all()
+
+    data = {
+        'id': election.id,
+        'title': election.title,
+        'start_credits': election.start_credits,
+        'start_date': election.start_date,
+        'end_date': election.end_date,
+        'description': election.description,
+        'status': election.status.value,
+        'candidates': [{
+            'id': candidate.id,
+            'name': candidate.name,
+            'description': candidate.description,
+        } for candidate in candidates]
+    }
+    return jsonify(data), 200
+
+
 @election_routes.route('/create_election', methods=['POST'])
 @admin_required
 def create_election():

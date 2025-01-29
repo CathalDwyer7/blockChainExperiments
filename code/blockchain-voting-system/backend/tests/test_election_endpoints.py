@@ -39,6 +39,7 @@ def helper_create_election():
 
     db.session.add_all([cand1,cand2])
     db.session.commit()
+    return tmp.id
 
 def helper_get_user_headers(test_client):
     _ = helper_register_user(test_client, 'peppe', 'pass')
@@ -112,10 +113,17 @@ def test_create_election_with_candidates(test_client):
     }
 
     response = test_client.post(endpoint, json=data, headers=access_headers)
-    print(response.get_json())
     assert response.status_code == 201
 
 
+def test_get_election_by_id(test_client):
+    id = helper_create_election()
+    _ = helper_create_election()
+    access_headers = helper_get_user_headers(test_client)
+
+    response = test_client.get(f'/api/elections/get_election/{id}', headers=access_headers)
+    assert response.status_code == 200
+    assert response.get_json()['id'] == id
 
 
 #def test_create_election_with_no_permission(test_client):
