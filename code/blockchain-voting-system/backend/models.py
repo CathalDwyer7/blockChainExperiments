@@ -3,6 +3,7 @@ from sqlalchemy.orm import Mapped, mapped_column
 from sqlalchemy import String, Integer, Text, Boolean, ForeignKey
 from extensions import db
 import enum
+from dataclasses import dataclass
 
 class ElectionStatus(enum.Enum):
     """Enumeration representing the possible statuses of an election."""
@@ -10,6 +11,7 @@ class ElectionStatus(enum.Enum):
     ONGOING = 'ongoing'
     COMPLETED ='completed'
 
+@dataclass
 class User(db.Model):
     """
     Represents a user in the system.
@@ -23,10 +25,11 @@ class User(db.Model):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     username: Mapped[str] = mapped_column(String(80), unique=True, nullable=False)
-    password: Mapped[str] = mapped_column(String(120), nullabe=False)
-    is_admin: Mapped[Boolean] = mapped_column(Boolean, default=False) 
+    password: Mapped[str] = mapped_column(String(120), nullable=False)
+    is_admin: Mapped[bool] = mapped_column(Boolean, default=False) 
 
 
+@dataclass
 class Election(db.Model):
     """
     Represents an election in the system.
@@ -64,6 +67,7 @@ class Election(db.Model):
             return ElectionStatus.COMPLETED
         
 
+@dataclass
 class ElectionCredits(db.Model):
     """
     Represents the credit system for quadratic voting in an election.
@@ -81,6 +85,7 @@ class ElectionCredits(db.Model):
     credits_left: Mapped[int] = mapped_column(Integer, nullable=False)
 
 
+@dataclass
 class Candidates(db.Model):
     """
     Represents a candidate participating in an election.
