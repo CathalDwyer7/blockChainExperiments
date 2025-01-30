@@ -106,6 +106,20 @@ def create_election():
     }
     return jsonify(output_data), 201
 
+# i need to add /vote/election_id (save on the blockchain)
+# get the result of an election (get data from the blockchain)
+# and also all kind of like add cadidates to election, modify election, remove election etc...
+
+
+@election_routes.route('/vote/<int:id>', methods=['GET'])
+@jwt_required()
+def vote_election_by_id(id):
+    pass
+
+@election_routes.route('/results/<int:id>', methods=['GET'])
+@jwt_required()
+def election_results_by_id(id):
+    pass
 
 #@election_routes.route('/vote', methods=['POST'])
 #@jwt_required()
