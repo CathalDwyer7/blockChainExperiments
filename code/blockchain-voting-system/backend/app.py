@@ -23,9 +23,14 @@ jwt.init_app(app)
 # Import and register blueprints
 from routes.auth import auth_routes
 from routes.elections import election_routes
+from routes.mine import mine_routes
+from routes.vote import vote_routes
 
 app.register_blueprint(auth_routes, url_prefix='/api/auth')
 app.register_blueprint(election_routes, url_prefix='/api/elections')
+app.register_blueprint(mine_routes, url_prefix='/api/mine')
+app.register_blueprint(vote_routes, url_prefix='/api/vote')
+
 
 with app.app_context():
     db.create_all()

@@ -44,13 +44,14 @@ class Chain:
         )
 
         self.current_votes = []
+        self.blocks.append(block)
 
         return block
 
-    def new_vote(self, user_id: str, election_id: str, candidate_id: str) -> int:
+    def new_vote(self, user_id: str, election_id: str, candidate_id: str, votes: int) -> int:
         """create a new vote to go into then next mined block, return the idx of the block that will hold this vote"""
 
-        new = Vote(user_id, election_id, candidate_id)
+        new = Vote(user_id, election_id, candidate_id, votes)
         self.current_votes.append(new)
 
         return self.last_block.index + 1
@@ -59,7 +60,7 @@ class Chain:
         """Pow algo: find a number p such that hash(pp') contains 4 leading 0s (where p is the previous pow, p' is the new)"""
 
         new_proof = 0
-        while self.is_valid_pow(last_proof, new_proof):
+        while not self.is_valid_pow(last_proof, new_proof):
             new_proof += 1
 
         return new_proof
@@ -68,3 +69,12 @@ class Chain:
         guess = f"{last_pow}{new_pow}".encode()
         hashed_guess = hashlib.sha256(guess).hexdigest()
         return hashed_guess[:self.POW_DIFFICULTY] == "0" * self.POW_DIFFICULTY
+
+    def vote_counter(self, election_id: str) -> dict:
+        """ return a dict where keys are candidate_id and value the number of votes that they got in the election_id as param """
+        result = {}
+        for block in self.blocks:
+            for vote in block.votes:
+                if vote.election_id == election_id:
+                    result[vote.candidate_id] = result.get(vote.candidate_id, 0) + vote.votes
+        return result
