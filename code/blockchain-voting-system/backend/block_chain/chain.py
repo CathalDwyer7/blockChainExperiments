@@ -1,9 +1,11 @@
 import json
 import hashlib
-from .block import Block
-from .vote import Vote
+from block import Block
+from vote import Vote
 from typing import List
 import time
+from encryption.paillier import decrypt, encrypted_addition, encrypt
+
 
 class Chain:
     def __init__(self):
@@ -21,13 +23,11 @@ class Chain:
         """return the last block object in the chain"""
         return self.blocks[-1]
 
-
     @staticmethod
     def hash(block: Block) -> str:
         """Creates a SHA-256 hash of a Block"""
         block_string = json.dumps(block.as_dict(), sort_keys=True).encode()
         return hashlib.sha256(block_string).hexdigest()
-
 
     def new_block(self, proof: int, previous_hash: str | None = None) -> Block:
         """Create a new block and add it in the chain"""
@@ -48,10 +48,12 @@ class Chain:
 
         return block
 
-    def new_vote(self, user_id: str, election_id: str, candidate_id: str, votes: int) -> int:
+    def new_vote(
+        self, election_id: int, encrypted_candidate_id: int, encrypted_votes: int 
+    ) -> int:
         """create a new vote to go into then next mined block, return the idx of the block that will hold this vote"""
 
-        new = Vote(user_id, election_id, candidate_id, votes)
+        new = Vote(election_id, encrypted_candidate_id, encrypted_votes)
         self.current_votes.append(new)
 
         return self.last_block.index + 1
@@ -68,13 +70,24 @@ class Chain:
     def is_valid_pow(self, last_pow: int, new_pow: int) -> bool:
         guess = f"{last_pow}{new_pow}".encode()
         hashed_guess = hashlib.sha256(guess).hexdigest()
-        return hashed_guess[:self.POW_DIFFICULTY] == "0" * self.POW_DIFFICULTY
+        return hashed_guess[: self.POW_DIFFICULTY] == "0" * self.POW_DIFFICULTY
 
-    def vote_counter(self, election_id: str) -> dict:
+    def vote_counter(self, election_id: int, public_key, private_key) -> dict:
         """ return a dict where keys are candidate_id and value the number of votes that they got in the election_id as param """
+        ZERO = encrypt(0, public_key)
         result = {}
         for block in self.blocks:
             for vote in block.votes:
                 if vote.election_id == election_id:
-                    result[vote.candidate_id] = result.get(vote.candidate_id, 0) + vote.votes
+                    candidate_id = decrypt(vote.encrypted_candidate_id, private_key)
+
+                    result[candidate_id] = encrypted_addition(
+                        result.get(candidate_id, ZERO),
+                        vote.encrypted_votes,
+                        public_key
+                    )
+
+        for key in result:
+            result[key] = decrypt(result[key], private_key)
+
         return result

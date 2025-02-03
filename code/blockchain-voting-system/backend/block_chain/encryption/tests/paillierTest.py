@@ -1,4 +1,4 @@
-from encryption.paillier import generate_paillier_keypair, encrypt, decrypt
+from paillier import generate_paillier_keypair, encrypt, decrypt
 
 # Generate Paillier keypair
 public_key, private_key = generate_paillier_keypair()

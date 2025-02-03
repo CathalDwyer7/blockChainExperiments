@@ -3,8 +3,6 @@ from math import gcd
 
 # Generate RSA Keypair
 def generate_rsa_keypair(key_size=512):
-    from math import gcd
-    from random import randint
 
     def generate_large_prime(bits):
         while True:
