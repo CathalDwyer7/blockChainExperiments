@@ -1,9 +1,10 @@
 from datetime import datetime
 from sqlalchemy.orm import Mapped, mapped_column
-from sqlalchemy import String, Integer, Text, Boolean, ForeignKey
+from sqlalchemy import String, Integer, Text, Boolean, ForeignKey, JSON
 from extensions import db
 import enum
 from dataclasses import dataclass
+from block_chain.encryption.paillier import generate_paillier_keypair
 
 class ElectionStatus(enum.Enum):
     """Enumeration representing the possible statuses of an election."""
@@ -49,6 +50,16 @@ class Election(db.Model):
     start_date: Mapped[int] = mapped_column(Integer, nullable=False) 
     end_date: Mapped[int] = mapped_column(Integer, nullable=False) 
     description: Mapped[str] = mapped_column(Text, nullable=True)
+
+    public_key: Mapped[dict] = mapped_column(JSON, nullable=True) 
+    private_key: Mapped[dict] = mapped_column(JSON, nullable=True)
+
+    def __post_init__(self):
+        """ create the public and private key after the object creation """
+        if not self.public_key or not self.private_key:
+            (n, g), (lam, mu, p) = generate_paillier_keypair()
+            self.public_key = {'n': n, 'g': g}
+            self.private_key = {'lambda': lam, 'mu': mu, 'p': p}
 
     @property
     def status(self) -> ElectionStatus:

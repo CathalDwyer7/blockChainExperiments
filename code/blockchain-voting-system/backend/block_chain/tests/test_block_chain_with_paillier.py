@@ -5,17 +5,8 @@ import sys
 import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-from chain import Chain
-from typing import List
-from vote import Vote
-
-from encryption.paillier import (
-    decrypt_string,
-    encrypt_string,
-    generate_paillier_keypair,
-    encrypt,
-    decrypt,
-)
+from block_chain.chain import Chain
+from block_chain.encryption.paillier import * 
 
 @pytest.fixture
 def blockchain():

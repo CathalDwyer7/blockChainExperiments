@@ -1,4 +1,4 @@
-from vote import Vote
+from block_chain.vote import Vote
 from typing import List
 from dataclasses import dataclass, asdict
 

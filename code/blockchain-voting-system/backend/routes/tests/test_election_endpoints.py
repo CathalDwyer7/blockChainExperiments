@@ -2,6 +2,11 @@
 # run with this command bc datetime.utc is deprecated and we need to change it later
 from datetime import datetime, timedelta
 import pytest
+
+import sys
+import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
 from app import app, db
 from models import Election, Candidates
 from .test_auth_endpoints import helper_login_user, helper_register_user

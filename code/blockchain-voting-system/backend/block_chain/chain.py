@@ -1,10 +1,10 @@
 import json
 import hashlib
-from block import Block
-from vote import Vote
+from block_chain.block import Block
+from block_chain.vote import Vote
 from typing import List
 import time
-from encryption.paillier import decrypt, encrypted_addition, encrypt
+from block_chain.encryption.paillier import decrypt, encrypted_addition, encrypt
 
 
 class Chain:
