@@ -9,3 +9,9 @@ We ended up going with a quadratic based voting system as we found it hadnt been
 
 # 2024-10-31 Project approval
 Our project was approved by John Mckenna and Ray Walshe. They wanted to know how we would encrypt the votes. We forgot to mention pallier encryption. But we still got our project approved. We showed great understanding of what blockchain is and how blockchain based quadratic voting might be beneficial.
+
+# 2025-01-03 Began coding the project
+Added in a basic react Frontend including a page for the admin, voters and a result page. We also mafe a login page to ask the user to login and a dashboard page. Basic outline of the frontend.
+
+# 2025-01-04 Admin and User functionality
+Admins can now create, delete and end an election (only frontend functionality currently). Users can now cast a vote onto the basic election system. Began doing further research on how we can implement blind signitures and paillier encryption.
