@@ -1,4 +1,4 @@
-# pytest -s -p no:warnings tests/test_election_endpoints.py
+# pytest -s -p no:warnings routes/tests/test_election_endpoints.py
 # run with this command bc datetime.utc is deprecated and we need to change it later
 from datetime import datetime, timedelta
 import pytest
@@ -129,41 +129,3 @@ def test_get_election_by_id(test_client):
     response = test_client.get(f'/api/elections/get_election/{id}', headers=access_headers)
     assert response.status_code == 200
     assert response.get_json()['id'] == id
-
-
-#def test_create_election_with_no_permission(test_client):
-#    voter_token = login_user(test_client, 'voter', 'voter123')
-#    response = test_client.post('/api/elections/', json={
-#        'title': 'Unauthorized Election'
-#    }, headers={
-#        'Authorization': f'Bearer {voter_token}'
-#    })
-#    assert response.status_code == 403
-#    assert response.get_json()['error'] == 'Unauthorized'
-
-
-#
-#def test_submit_vote(test_client):
-#    voter_token = login_user(test_client, 'voter', 'voter123')
-#
-#    # Voter submits a vote
-#    response = test_client.post('/api/elections/vote', json={
-#        'election_id': 1,
-#        'proposal': 'Proposal A',
-#        'votes': 4
-#    }, headers={
-#        'Authorization': f'Bearer {voter_token}'
-#    })
-#    assert response.status_code == 201
-#    assert response.get_json()['message'] == 'Vote submitted successfully'
-#
-#    # Voting for a non-existent election
-#    response = test_client.post('/api/elections/vote', json={
-#        'election_id': 999,
-#        'proposal': 'Nonexistent Proposal',
-#        'votes': 1
-#    }, headers={
-#        'Authorization': f'Bearer {voter_token}'
-#    })
-#    assert response.status_code == 404
-#    assert response.get_json()['error'] == 'Election not found'

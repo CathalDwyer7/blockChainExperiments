@@ -67,31 +67,7 @@ def get_election_by_id(id):
     return jsonify(data), 200
 
 
-@election_routes.route("/get_election_public_key/<int:id>", methods=["GET"])
-@jwt_required()
-def get_election_public_key(id):
-    election = Election.query.get(id)
 
-    if election is None:
-        return jsonify({"error": "Election not found"}), 404
-
-    return jsonify({'public_key':election.public_key}), 200
-
-@election_routes.route("/get_election_private_key/<int:id>", methods=["GET"])
-@jwt_required()
-def get_election_private_key(id):
-    election = Election.query.get(id)
-
-    if election is None:
-        return jsonify({"error": "Election not found"}), 404
-
-    #uncomment after testing
-    #from models import ElectionStatus
-
-    #if election.status != ElectionStatus.COMPLETED:
-    #    return jsonify({"error": "It is not possible to get the private key before the election is completed"}), 400
-
-    return jsonify({'public_key':election.private_key}), 200
 
 @election_routes.route("/create_election", methods=["POST"])
 @admin_required

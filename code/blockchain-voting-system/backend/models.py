@@ -54,8 +54,9 @@ class Election(db.Model):
     public_key: Mapped[dict] = mapped_column(JSON, nullable=True) 
     private_key: Mapped[dict] = mapped_column(JSON, nullable=True)
 
-    def __post_init__(self):
-        """ create the public and private key after the object creation """
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs) #call the init form dataclasses
+
         if not self.public_key or not self.private_key:
             (n, g), (lam, mu, p) = generate_paillier_keypair()
             self.public_key = {'n': n, 'g': g}
