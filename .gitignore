@@ -10,3 +10,16 @@
 
 # ignore database
 **/db.sqlite
+
+# Ignore ZoKrates-generated files
+/code/blockchain-voting-system/zk_snarks/out
+/code/blockchain-voting-system/zk_snarks/out.*
+/code/blockchain-voting-system/zk_snarks/proving.key
+/code/blockchain-voting-system/zk_snarks/verification.key
+/code/blockchain-voting-system/zk_snarks/witness
+/code/blockchain-voting-system/zk_snarks/proof.json
+/code/blockchain-voting-system/zk_snarks/abi.json
+/code/blockchain-voting-system/zk_snarks/verifier.sol
+# not sure if these are need to be ignored or not
+/code/blockchain-voting-system/zk_snarks/*.r1cs
+/code/blockchain-voting-system/zk_snarks/*.wtns

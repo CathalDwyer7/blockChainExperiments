@@ -1,0 +1,4 @@
+def main(private field x, private field y) -> field {
+    assert(x + y == 10);
+    return x + y;
+}
