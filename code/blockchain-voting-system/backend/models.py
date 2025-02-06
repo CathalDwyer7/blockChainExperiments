@@ -29,6 +29,8 @@ class User(db.Model):
     password: Mapped[str] = mapped_column(String(120), nullable=False)
     is_admin: Mapped[bool] = mapped_column(Boolean, default=False) 
 
+    public_key: Mapped[dict] = mapped_column(JSON, nullable=True) 
+
 
 @dataclass
 class Election(db.Model):
@@ -88,7 +90,7 @@ class ElectionCredits(db.Model):
         `id` (`int`): Unique identifier for the credit record.
         `user_id` (`int`): Foreign key referencing the user participating in the election.
         `election_id` (`int`): Foreign key referencing the election.
-        `credits_left` (`int`): The number of credits remaining for the user in the election.
+        `credits_left` (`int`): The number of credits remaining encrypted with the public_key of the election.
     """
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
