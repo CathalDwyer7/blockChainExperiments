@@ -200,6 +200,44 @@ def test_submit_vote_endpoint(test_client):
     credits_left = int(json['credits_left'])
     assert credits_left == 6 
 
+    # 3 Check the results
+    
+    # 3.1 mine a block to save the votes
+    import hashlib
+    def helper_mine_a_block(last_proof, POW_DIFFICULTY):
+        def is_valid_pow(last_pow: int, new_pow: int) -> bool:
+            guess = f"{last_pow}{new_pow}".encode()
+            hashed_guess = hashlib.sha256(guess).hexdigest()
+            return hashed_guess[:POW_DIFFICULTY] == "0" * POW_DIFFICULTY
+
+        def proof_of_work(last_proof: int) -> int:
+            new_proof = 0
+            while not is_valid_pow(last_proof, new_proof):
+                new_proof += 1
+            return new_proof
+        
+        return proof_of_work(last_proof) 
+
+    response = test_client.get('/api/mine/info', headers=access_headers)
+    data = response.get_json()
+    last_pof, diff =  data['last_proof'], data['difficulty']
+    new_proof = helper_mine_a_block(last_pof, diff)
+
+    response = test_client.post('/api/mine/mine-block', json={'proof': new_proof}, headers=access_headers)
+    data = response.get_json()
+
+    assert response.status_code == 201
+    assert data['msg'] == 'New block mined!'
+
+    # 3.2 fetch the results
+    response = test_client.get(
+        f'/api/vote/result/{election_target.id}',
+        headers=access_headers
+    )
+
+    print(response.get_json())
+
+
 
 
     

@@ -119,4 +119,44 @@ def vote_election_by_id():
 
     return jsonify({"msg": "You have submitted your vote correctly"}), 200 
 
+@vote_routes.route("/result/<int:id>", methods=["GET"])
+@jwt_required()
+def get_election_results(id):
+    election = Election.query.get(id)
+
+    if election is None:
+        return jsonify({"error": "Election not found"}), 404
+
+    #uncomment after testing
+    #from models import ElectionStatus
+
+    #if election.status != ElectionStatus.COMPLETED:
+    #    return jsonify({"error": "It is not possible to get election result before the election is completed"}), 400
+
+    #(int(lambda_val), int(mu), int(n))
+
+    election_public_key = int(election.public_key['n']), int(election.public_key['g'])
+    election_private_key = (
+            int(election.private_key['lambda']),
+            int(election.private_key['mu']),
+            int(election.private_key['p'])
+    )
+
+    candidateID_to_votes = block_chain.vote_counter(
+        election.id,
+        election_public_key,
+        election_private_key
+    )
+
+    result: dict[str,int] = {}
+    for id, votes in candidateID_to_votes.items():
+        candidate_obj: Optional[Candidates] = Candidates.query.get(id)
+
+        if not candidate_obj or candidate_obj.election_id != id:
+            continue
+
+        result[candidate_obj.name] = votes 
+
+
+    return jsonify({'result':result}), 200
 

@@ -72,10 +72,10 @@ class Chain:
         hashed_guess = hashlib.sha256(guess).hexdigest()
         return hashed_guess[: self.POW_DIFFICULTY] == "0" * self.POW_DIFFICULTY
 
-    def vote_counter(self, election_id: int, public_key, private_key) -> dict:
+    def vote_counter(self, election_id: int, public_key, private_key) -> dict[int,int]:
         """ return a dict where keys are candidate_id and value the number of votes that they got in the election_id as param """
         ZERO = encrypt(0, public_key)
-        result = {}
+        result: dict[int,int] = {}
         for block in self.blocks:
             for vote in block.votes:
                 if vote.election_id == election_id:
