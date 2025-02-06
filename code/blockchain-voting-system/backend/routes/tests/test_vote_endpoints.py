@@ -6,7 +6,7 @@ from models import Election, Candidates
 from app import app, db
 from typing import Optional
 from .test_election_endpoints import helper_get_user_headers
-from block_chain.encryption.paillier import decrypt, generate_paillier_keypair
+from block_chain.encryption.paillier import encrypt, decrypt, generate_paillier_keypair
 
 @pytest.fixture(scope="function")
 def test_client():
@@ -105,18 +105,11 @@ def test_submit_vote_endpoint(test_client):
 
     # 1.1 user genereate keys to encypt his credit_lefts
     USER, PASS = 'peppe', '12345'
-    N, G = 0, 1
-    LAMBDA, MU, P = 0, 1, 2
-    pb_key, pr_key = generate_paillier_keypair() # these keys are for left credits encryption
-
-    assert pb_key[N] == pr_key[P]
 
     # 1.2 user register with username, password and public_keys
     resp = test_client.post('/api/auth/register', json={
         'username': USER,
         'password': PASS,
-        'public_key_n': pb_key[N],
-        'public_key_g': pb_key[G]
     })
     assert resp.status_code == 201
 
@@ -125,6 +118,7 @@ def test_submit_vote_endpoint(test_client):
         'username': USER,
         'password': PASS 
     })
+
     token = response.get_json()['access_token']
     access_headers = {"Authorization": "Bearer {}".format(token)}
     
@@ -149,12 +143,64 @@ def test_submit_vote_endpoint(test_client):
     )
 
     json = response.get_json()
-    print(json)
-    en_credit_left = int(json['encrypted_credits_left'])
-    assert decrypt(en_credit_left, pr_key) == 10
+    credits_left = int(json['credits_left'])
+    assert credits_left == 10
 
-    # 2.3 build the payload to send to the submit vote endpoint
+    # 2.3 create the payload to send to the /submit endpoint
+
+    pay_load = {
+        "election_id":election_target.id, 
+        "encrypted_candidate_id":encrypt(int(cand1.id), election_pb_key), 
+        "votes": 2
+    }
+    
+    response = test_client.post(
+        '/api/vote/submit',
+        json=pay_load,
+        headers=access_headers
+    )
+
+    assert response.status_code == 200 
+
+    # 2.3 after we use 2 votes we spent 2 ** 2 = 4 credits
+    # our credits now should be 10 - 4 = 6
+    
+    response = test_client.get(
+        f'/api/vote/election_credits_left/{election_target.id}',
+        headers=access_headers
+    )
+
+    json = response.get_json()
+    credits_left = int(json['credits_left'])
+    assert credits_left == 6 
+
+    # 2.4 let's try to cast 6 vote that we can not afford
+
+    pay_load = {
+        "election_id":election_target.id, 
+        "encrypted_candidate_id":encrypt(int(cand2.id), election_pb_key), 
+        "votes": 6
+    }
+    
+    response = test_client.post(
+        '/api/vote/submit',
+        json=pay_load,
+        headers=access_headers
+    )
+
+    assert response.status_code == 400 
+    assert response.get_json()['error'] == f"You do not have enough credtis to cast {6} votes"
+    # our credits should be still 6
+    response = test_client.get(
+        f'/api/vote/election_credits_left/{election_target.id}',
+        headers=access_headers
+    )
+
+    json = response.get_json()
+    credits_left = int(json['credits_left'])
+    assert credits_left == 6 
 
 
 
     
+

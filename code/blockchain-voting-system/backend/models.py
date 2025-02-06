@@ -29,7 +29,7 @@ class User(db.Model):
     password: Mapped[str] = mapped_column(String(120), nullable=False)
     is_admin: Mapped[bool] = mapped_column(Boolean, default=False) 
 
-    public_key: Mapped[dict] = mapped_column(JSON, nullable=True) 
+    #public_key: Mapped[dict] = mapped_column(JSON, nullable=True) 
 
 
 @dataclass

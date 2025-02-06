@@ -49,17 +49,17 @@ def get_election_credits_left(id):
         user_id=user.id, election_id=election.id
     ).first()
 
-    user_public_key = user.public_key['n'], user.public_key['g'] 
 
     if not election_credit:
         election_credit = ElectionCredits(
             user_id=user.id,
             election_id=election.id,
-            credits_left=encrypt(election.start_credits, user_public_key)
+            credits_left=election.start_credits
         )
         db.session.add(election_credit)
+        db.session.commit()
     
-    return jsonify({'encrypted_credits_left':election_credit.credits_left}), 200
+    return jsonify({'credits_left':election_credit.credits_left}), 200
 
 @vote_routes.route("/submit", methods=["POST"])
 @jwt_required()
@@ -70,28 +70,53 @@ def vote_election_by_id():
     required_fields = [
         "election_id", 
         "encrypted_candidate_id", 
-        "encrypted_votes", 
-        "encrypted_cost",
-        "candidate_commitment",
-        "votes_commitment",
-        "cost_commitment",
-        "zkp_proofs"
+        "votes"
     ]
-
     missing_fields = [field for field in required_fields if field not in data]
-
     if missing_fields:
         return jsonify({"error": f'{", ".join(missing_fields)} are required'}), 400
     
-    user: Optional[User] = User.query.get(current_user['id']) 
-    election: Optional[Election] = Election.query.get(data['election_id'])
+    try:
+        user_id = current_user['id']
+        election_id = int(data['election_id'])
+        en_candidate_id = int(data['encrypted_candidate_id'])
+        votes = int(data['votes'])
+        cost = votes ** 2
+    except ValueError:
+        return jsonify({"error": "election_id,encrypted_candidate_id, and votes must be int "}), 400
 
-    if not election:
+
+    user: Optional[User] = User.query.get(user_id) 
+    election: Optional[Election] = Election.query.get(election_id)
+
+    if not election or not user:
         return jsonify({"error": "Election not found"}), 404
 
     if election.status != ElectionStatus.ONGOING:
         return jsonify({"error": "Election is not active"}), 400
 
-    # Check Pedersen Commitments
-    
+    election_credit = ElectionCredits.query.filter_by(
+        user_id=user.id, election_id=election.id
+    ).first()
+
+    if not election_credit:
+        election_credit = ElectionCredits(
+            user_id=user.id,
+            election_id=election.id,
+            credits_left=election.start_credits
+        )
+        db.session.add(election_credit)
+        db.session.commit()
+        
+    if election_credit.credits_left < cost:
+        return jsonify({"error": f"You do not have enough credtis to cast {votes} votes"}), 400
+
+    election_credit.credits_left -= cost
+    db.session.commit()
+
+    election_key = int(election.public_key['n']), int(election.public_key['g'])
+    block_chain.new_vote(election_id, en_candidate_id, encrypt(votes, election_key))
+
+    return jsonify({"msg": "You have submitted your vote correctly"}), 200 
+
 
