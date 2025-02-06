@@ -3,8 +3,8 @@ import random
 import time
 
 #use of small value to speed up the process
-Q_BITS = 16  # 160
-P_BITS = 32 # 512
+Q_BITS = 16  # 160 production ready
+P_BITS = 32 # 512 prodcution ready
 
 class PedersenCommitment:
     def __init__(self, q_bits=Q_BITS, p_bits=P_BITS) -> None:
