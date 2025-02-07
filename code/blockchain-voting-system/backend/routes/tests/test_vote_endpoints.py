@@ -64,7 +64,7 @@ def test_get_keys_endpoint(test_client):
     # public key test
     assert response.get_json()['public_key']['n'] == n
     assert response.get_json()['public_key']['g'] == g
-    
+
     response = test_client.get(
         f'/api/vote/private_key_election/{election_id}',
         headers=helper_get_user_headers(test_client)
@@ -75,7 +75,64 @@ def test_get_keys_endpoint(test_client):
     assert response.get_json()['private_key']['mu'] == mu 
     assert response.get_json()['private_key']['p'] == p 
 
-def test_submit_vote_endpoint(test_client):
+def get_credits_left(test_client, election_id, access_headers):
+    response = test_client.get(
+        f'/api/vote/election_credits_left/{election_id}',
+        headers=access_headers
+    )
+
+    json = response.get_json()
+    credits_left = int(json['credits_left'])
+    return credits_left
+
+
+def get_proof(test_client, election_id, votes, access_headers):
+    pay_load = {
+        "election_id":election_id,
+        "votes":votes 
+    }
+
+    response = test_client.post(
+        '/api/vote/request_proof',
+        json=pay_load,
+        headers=access_headers
+    )
+
+    if response.status_code != 200:
+        return response.status_code, None
+
+    proof = response.get_json()['proof']
+    return 200, proof
+
+def mine_block(test_client, access_headers):
+    import hashlib
+    def helper_mine_a_block(last_proof, POW_DIFFICULTY):
+        def is_valid_pow(last_pow: int, new_pow: int) -> bool:
+            guess = f"{last_pow}{new_pow}".encode()
+            hashed_guess = hashlib.sha256(guess).hexdigest()
+            return hashed_guess[:POW_DIFFICULTY] == "0" * POW_DIFFICULTY
+
+        def proof_of_work(last_proof: int) -> int:
+            new_proof = 0
+            while not is_valid_pow(last_proof, new_proof):
+                new_proof += 1
+            return new_proof
+        
+        return proof_of_work(last_proof) 
+
+    response = test_client.get('/api/mine/info', headers=access_headers)
+    data = response.get_json()
+    last_pof, diff =  data['last_proof'], data['difficulty']
+    new_proof = helper_mine_a_block(last_pof, diff)
+
+    response = test_client.post('/api/mine/mine-block', json={'proof': new_proof}, headers=access_headers)
+    data = response.get_json()
+
+    assert response.status_code == 201
+    assert data['msg'] == 'New block mined!'
+
+
+def test_submit_voting_flow(test_client):
     # ====================================================
     # 0. create an election:
     # ====================================================
@@ -136,109 +193,64 @@ def test_submit_vote_endpoint(test_client):
     election_pb_key = int(json['public_key']['n']), int(json['public_key']['g'])
 
     # 2.2 fetch how many credits he has left in this election 
+    assert get_credits_left(test_client, election_target.id, access_headers) == 10
 
-    response = test_client.get(
-        f'/api/vote/election_credits_left/{election_target.id}',
-        headers=access_headers
-    )
+    # 2.3 request the proof that we can afford this amout of votes 
+    status_code, proof = get_proof(test_client, election_target.id, 2, access_headers)
+    assert status_code == 200
 
-    json = response.get_json()
-    credits_left = int(json['credits_left'])
-    assert credits_left == 10
-
-    # 2.3 create the payload to send to the /submit endpoint
-
-    pay_load = {
-        "election_id":election_target.id, 
-        "encrypted_candidate_id":encrypt(int(cand1.id), election_pb_key), 
-        "votes": 2
-    }
+    # 2.4 now the credits left should be 10 - 2 ** 2 = 10 - 4 = 6 let's check
+    assert get_credits_left(test_client, election_target.id, access_headers) == 6
     
+    # 2.5 submit our vote
+    pay_load = {
+        "election_id": election_target.id,
+        "votes": 2,
+        "proof": proof,
+        "encrypted_candidate_id": encrypt(cand1.id, election_pb_key)
+    }
     response = test_client.post(
         '/api/vote/submit',
         json=pay_load,
-        headers=access_headers
     )
+    assert response.status_code == 200
+    assert response.get_json()['msg'] == "You vote was correctly added"
 
-    assert response.status_code == 200 
 
-    # 2.3 after we use 2 votes we spent 2 ** 2 = 4 credits
-    # our credits now should be 10 - 4 = 6
-    
-    response = test_client.get(
-        f'/api/vote/election_credits_left/{election_target.id}',
-        headers=access_headers
-    )
-
-    json = response.get_json()
-    credits_left = int(json['credits_left'])
-    assert credits_left == 6 
-
-    # 2.4 let's try to cast 6 vote that we can not afford
-
+    # 2.6 let try to submit more votes and cheats
     pay_load = {
-        "election_id":election_target.id, 
-        "encrypted_candidate_id":encrypt(int(cand2.id), election_pb_key), 
-        "votes": 6
+        "election_id": election_target.id,
+        "votes": 10,
+        "proof": proof,
+        "encrypted_candidate_id": encrypt(cand1.id, election_pb_key)
     }
-    
     response = test_client.post(
         '/api/vote/submit',
         json=pay_load,
-        headers=access_headers
     )
+    assert response.status_code == 400
+    assert response.get_json()['error'] == "Proof not valid"
 
-    assert response.status_code == 400 
-    assert response.get_json()['error'] == f"You do not have enough credtis to cast {6} votes"
+    # 2.7 let's try to cast 6 vote that we can not afford
+    status_code, proof = get_proof(test_client, election_target.id, 6, access_headers)
+    assert status_code == 400
+    assert proof == None
+
     # our credits should be still 6
-    response = test_client.get(
-        f'/api/vote/election_credits_left/{election_target.id}',
-        headers=access_headers
-    )
+    assert get_credits_left(test_client, election_target.id, access_headers) == 6
 
-    json = response.get_json()
-    credits_left = int(json['credits_left'])
-    assert credits_left == 6 
+   
+    # ====================================================
+    # 3 mine a block to save the votes
+    # ====================================================
 
-    # 3 Check the results
+    # 3.1 mine a block
+    mine_block(test_client, access_headers)
     
-    # 3.1 mine a block to save the votes
-    import hashlib
-    def helper_mine_a_block(last_proof, POW_DIFFICULTY):
-        def is_valid_pow(last_pow: int, new_pow: int) -> bool:
-            guess = f"{last_pow}{new_pow}".encode()
-            hashed_guess = hashlib.sha256(guess).hexdigest()
-            return hashed_guess[:POW_DIFFICULTY] == "0" * POW_DIFFICULTY
-
-        def proof_of_work(last_proof: int) -> int:
-            new_proof = 0
-            while not is_valid_pow(last_proof, new_proof):
-                new_proof += 1
-            return new_proof
-        
-        return proof_of_work(last_proof) 
-
-    response = test_client.get('/api/mine/info', headers=access_headers)
-    data = response.get_json()
-    last_pof, diff =  data['last_proof'], data['difficulty']
-    new_proof = helper_mine_a_block(last_pof, diff)
-
-    response = test_client.post('/api/mine/mine-block', json={'proof': new_proof}, headers=access_headers)
-    data = response.get_json()
-
-    assert response.status_code == 201
-    assert data['msg'] == 'New block mined!'
-
     # 3.2 fetch the results
     response = test_client.get(
         f'/api/vote/result/{election_target.id}',
         headers=access_headers
     )
 
-    print(response.get_json())
-
-
-
-
-    
-
+    assert response.get_json()['result'][cand1.name] == 2

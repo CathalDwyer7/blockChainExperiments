@@ -13,8 +13,8 @@ class PedersenCommitment:
         print(f"Time to generate p and q: {time.time() - start_time:.4f} seconds")
 
         start_time = time.time()
-        self.gen1 = self._find_generator(self.q, self.p) # generator for the first value  (i.e. Vote encrypted)
-        self.gen2 = self._find_generator(self.q, self.p) # generator for the second value (i.e. ZKP of the vote)
+        self.gen1 = self._find_generator(self.q, self.p) # generator for election_id 
+        self.gen2 = self._find_generator(self.q, self.p) # generator for votes 
         self.gen3 = self._find_generator(self.q, self.p) # generator for the random
         print(f"Time to find generators: {time.time() - start_time:.4f} seconds")
 

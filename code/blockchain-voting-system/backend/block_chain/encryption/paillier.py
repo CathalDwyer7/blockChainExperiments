@@ -97,7 +97,7 @@ def main():
     en_n1_plus_n2 = encrypted_addition(en_n1, en_n2, public_key)
     print(f"42 + 10 = {decrypt(en_n1_plus_n2, private_key)}")
 
-    # for str
+    # for str to MAY allow users to write whatever they want in their vote
     msg = "super secret message"
     en_msg = encrypt_string(msg, public_key)
     print(f"start msg: '{msg}'\n encrypted: {en_msg}\n decrypted: '{decrypt_string(en_msg, private_key)}' ")
