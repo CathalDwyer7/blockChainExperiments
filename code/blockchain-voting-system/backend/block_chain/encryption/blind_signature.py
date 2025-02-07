@@ -73,3 +73,28 @@ def unblind_signature(blinded_signature, r, public_key):
     e, n = public_key
     r_inv = pow(r, -1, n)
     return (blinded_signature * r_inv) % n
+
+
+def main():
+    # Generate RSA keypair
+    public_key, private_key = generate_rsa_keypair()
+
+    # Example message
+    message = 42
+
+    # Blind the message
+    blinded_message, blinding_factor = blind_message(message, public_key)
+
+    # Sign the blinded message
+    signed_blinded_message = sign_blinded_message(blinded_message, private_key)
+
+    # Unblind the signature
+    unblinded_signature = unblind_signature(signed_blinded_message, blinding_factor, public_key)
+
+    print(f"Original Message: {message}")
+    print(f"Blinded Message: {blinded_message}")
+    print(f"Signed Blinded Message: {signed_blinded_message}")
+    print(f"Unblinded Signature: {unblinded_signature}")
+
+if __name__ == "__main__":
+    main()

@@ -45,9 +45,10 @@ class PedersenCommitment:
             if attempts % 1_000_000 == 0:
                 print(f"Still searching for generator after {attempts} attempts...")
 
-    def generate_commit(self, value1: int, value2: int) -> tuple[int, int]:
+    def generate_commit(self, value1: int, value2: int, r=None) -> tuple[int, int]:
         """ from the two values and the 3 public generators create the commit """
-        r = random.randint(1, self.q - 1)
+        if not r:
+            r = random.randint(1, self.q - 1)
         a = pow(self.gen1, value1, self.p)
         b = pow(self.gen2, value2, self.p)
         c = pow(self.gen3, r, self.p)
@@ -69,14 +70,24 @@ def main():
     print(f"order of the subgroup q: {pedersen.q}")
     print(f"generators\ng1:{pedersen.gen1}\ng2:{pedersen.gen2}\ng2:{pedersen.gen2}")
 
-    # client
-    votes = 432042432
-    zkp_votes = 342342
-    commitment, r = pedersen.generate_commit(votes, zkp_votes)
+    election_id = 1
+    votes = 3
+    fake_votes = 50
 
-    # server 
-    assert pedersen.verify_commit(commitment, votes, zkp_votes, r) == True
-    assert pedersen.verify_commit(commitment, votes - 10, zkp_votes, r) == False 
+    # server check if the client has enough credtis and genearte a commitment with a fixed r
+    # remove the credtis used
+    commitment, _ = pedersen.generate_commit(election_id, votes, r=10)
+
+    # client send to another endpoint election_id, votes, that endpoints has r and check for the commitment
+    assert pedersen.verify_commit(commitment, election_id, votes, 10) == True
+
+    # if client try to cheat, we got him
+    assert pedersen.verify_commit(commitment, election_id, fake_votes, 10) == False 
+
+    # what if the cliant what to cheat?
+    # if we assume for absurd that the client have both the 3 generators, q and p
+    # he still need to find r
+    # the chance of find r random are 1 / (q - 1), if q is large enough this should approach zero
     
 if __name__ == "__main__":
     main()
