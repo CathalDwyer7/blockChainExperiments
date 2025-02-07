@@ -33,16 +33,7 @@ def register():
 
     hashed_password = generate_password_hash(password)
 
-    if data.get('public_key_n') and data.get('public_key_g'):
-        n,g = int(data.get('public_key_n')), int(data.get('public_key_g'))
-        new_user = User(
-            username=username,
-            password=hashed_password,
-            is_admin=is_admin,
-            public_key={'n': n, 'g': g}
-        )
-    else:
-        new_user = User(username=username,password=hashed_password,is_admin=is_admin)
+    new_user = User(username=username,password=hashed_password,is_admin=is_admin)
 
     db.session.add(new_user)
     db.session.commit()

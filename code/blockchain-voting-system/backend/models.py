@@ -28,8 +28,8 @@ class User(db.Model):
     username: Mapped[str] = mapped_column(String(80), unique=True, nullable=False)
     password: Mapped[str] = mapped_column(String(120), nullable=False)
     is_admin: Mapped[bool] = mapped_column(Boolean, default=False) 
+    coins: Mapped[int] = mapped_column(Integer, default=0)
 
-    #public_key: Mapped[dict] = mapped_column(JSON, nullable=True) 
 
 
 @dataclass
