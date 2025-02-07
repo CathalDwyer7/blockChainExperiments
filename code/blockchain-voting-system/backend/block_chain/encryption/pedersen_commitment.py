@@ -15,7 +15,8 @@ class PedersenCommitment:
         start_time = time.time()
         self.gen1 = self._find_generator(self.q, self.p) # generator for election_id 
         self.gen2 = self._find_generator(self.q, self.p) # generator for votes 
-        self.gen3 = self._find_generator(self.q, self.p) # generator for the random
+        self.gen3 = self._find_generator(self.q, self.p) # generator for timestamp 
+        self.gen4 = self._find_generator(self.q, self.p) # generator for the random
         print(f"Time to find generators: {time.time() - start_time:.4f} seconds")
 
     def _generate_safe_number(self, q_bits:int, p_bits: int) -> tuple[int,int]:
@@ -45,22 +46,24 @@ class PedersenCommitment:
             if attempts % 1_000_000 == 0:
                 print(f"Still searching for generator after {attempts} attempts...")
 
-    def generate_commit(self, value1: int, value2: int, r=None) -> tuple[int, int]:
+    def generate_commit(self, value1: int, value2: int, value3: int, r=None) -> tuple[int, int]:
         """ from the two values and the 3 public generators create the commit """
         if not r:
             r = random.randint(1, self.q - 1)
         a = pow(self.gen1, value1, self.p)
         b = pow(self.gen2, value2, self.p)
-        c = pow(self.gen3, r, self.p)
-        commitment = (a * b * c) % self.p
+        c = pow(self.gen3, value3, self.p)
+        d = pow(self.gen4, r, self.p)
+        commitment = (a * b * c * d) % self.p
         return commitment, r
 
-    def verify_commit(self, commitment:int, value1: int, value2: int, r:int) -> bool:
+    def verify_commit(self, commitment:int, value1: int, value2: int,value3: int, r:int) -> bool:
         """ from the commitment the two value and the r check if the commit is right """
         a = pow(self.gen1, value1, self.p)
         b = pow(self.gen2, value2, self.p)
-        c = pow(self.gen3, r, self.p)
-        expected_commitment = (a * b * c) % self.p
+        c = pow(self.gen3, value3, self.p)
+        d = pow(self.gen4, r, self.p)
+        expected_commitment = (a * b * c * d) % self.p
         return expected_commitment == commitment
 
 def main():
@@ -72,22 +75,39 @@ def main():
 
     election_id = 1
     votes = 3
+    timestamp = int(time.time() * 1000000)
     fake_votes = 50
 
     # server check if the client has enough credtis and genearte a commitment with a fixed r
     # remove the credtis used
-    commitment, _ = pedersen.generate_commit(election_id, votes, r=10)
+    commitment, _ = pedersen.generate_commit(election_id, votes, timestamp,r=10)
 
-    # client send to another endpoint election_id, votes, that endpoints has r and check for the commitment
-    assert pedersen.verify_commit(commitment, election_id, votes, 10) == True
+    # client send to another endpoint election_id, votes, that endpoints has r and check for the commitment and his timestamp
+    
+    # then server check it with secret fixed r
+    assert pedersen.verify_commit(commitment, election_id, votes,timestamp, 10) == True
 
     # if client try to cheat, we got him
-    assert pedersen.verify_commit(commitment, election_id, fake_votes, 10) == False 
+    assert pedersen.verify_commit(commitment, election_id, fake_votes, timestamp, 10) == False 
 
     # what if the cliant what to cheat?
     # if we assume for absurd that the client have both the 3 generators, q and p
     # he still need to find r
     # the chance of find r random are 1 / (q - 1), if q is large enough this should approach zero
+
+
+    # also by adding the timestamp same vote from different person should have different committment let's check
+    time.sleep(0.1)
+    timestamp2 = int(time.time() * 1000000)
+
+    commitment2, _ = pedersen.generate_commit(election_id, votes, timestamp2,r=10)
+
+    assert timestamp2 != timestamp
+    assert commitment != commitment2
+
+    # we use * 10000 to increase precsion to avoid get the same time stap if we process the code too fast
+    # we also use time.sleep(0.1) to be very sure that the time stamp is goging to change
+
     
 if __name__ == "__main__":
     main()

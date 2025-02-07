@@ -99,10 +99,11 @@ def get_proof(test_client, election_id, votes, access_headers):
     )
 
     if response.status_code != 200:
-        return response.status_code, None
+        return response.status_code, None, None
 
     proof = response.get_json()['proof']
-    return 200, proof
+    time_stamp = response.get_json()['time_stamp']
+    return 200, proof, time_stamp
 
 def mine_block(test_client, access_headers):
     import hashlib
@@ -196,7 +197,7 @@ def test_submit_voting_flow(test_client):
     assert get_credits_left(test_client, election_target.id, access_headers) == 10
 
     # 2.3 request the proof that we can afford this amout of votes 
-    status_code, proof = get_proof(test_client, election_target.id, 2, access_headers)
+    status_code, proof, time_stamp = get_proof(test_client, election_target.id, 2, access_headers)
     assert status_code == 200
 
     # 2.4 now the credits left should be 10 - 2 ** 2 = 10 - 4 = 6 let's check
@@ -207,6 +208,7 @@ def test_submit_voting_flow(test_client):
         "election_id": election_target.id,
         "votes": 2,
         "proof": proof,
+        "time_stamp": time_stamp,
         "encrypted_candidate_id": encrypt(cand1.id, election_pb_key)
     }
     response = test_client.post(
@@ -222,6 +224,7 @@ def test_submit_voting_flow(test_client):
         "election_id": election_target.id,
         "votes": 10,
         "proof": proof,
+        "time_stamp": time_stamp,
         "encrypted_candidate_id": encrypt(cand1.id, election_pb_key)
     }
     response = test_client.post(
@@ -232,9 +235,10 @@ def test_submit_voting_flow(test_client):
     assert response.get_json()['error'] == "Proof not valid"
 
     # 2.7 let's try to cast 6 vote that we can not afford
-    status_code, proof = get_proof(test_client, election_target.id, 6, access_headers)
+    status_code, proof, time_stamp = get_proof(test_client, election_target.id, 6, access_headers)
     assert status_code == 400
     assert proof == None
+    assert time_stamp == None
 
     # our credits should be still 6
     assert get_credits_left(test_client, election_target.id, access_headers) == 6

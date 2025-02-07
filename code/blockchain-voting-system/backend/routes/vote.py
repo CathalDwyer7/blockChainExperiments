@@ -1,10 +1,11 @@
-from .__init__ import block_chain, pedersen, FIXED_R, used_proofs
+from .__init__ import block_chain, pedersen, FIXED_R, used_proofs, valid_proofs
 from flask import Blueprint, jsonify, request
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from models import Election, User, Candidates, ElectionCredits, ElectionStatus
 from extensions import db
 from block_chain.encryption.paillier import encrypt
 from typing import Optional
+import time
 
 
 vote_routes = Blueprint("vote", __name__)
@@ -117,15 +118,23 @@ def request_proof_election():
     election_credit.credits_left -= cost
     db.session.commit()
 
-    proof, _ = pedersen.generate_commit(election_id, votes, FIXED_R)
-    return jsonify({"proof": proof}), 200
+    
+    time_stamp = int(time.time() * 1_000_000) 
+    proof, _ = pedersen.generate_commit(election_id, votes, time_stamp, FIXED_R)
+    while proof in  valid_proofs:
+        time.sleep(0.1)
+        time_stamp = int(time.time() * 1_000_000) 
+        proof, _ = pedersen.generate_commit(election_id, votes, time_stamp, FIXED_R)
+
+    valid_proofs.add(proof)
+    return jsonify({"proof": proof, "time_stamp": time_stamp}), 200
 
 
 @vote_routes.route("/submit", methods=["POST"])
 def submit_vote_election():
     data = request.get_json()
 
-    required_fields = ["election_id", "votes", "proof", "encrypted_candidate_id"]
+    required_fields = ["election_id", "votes", "proof", "time_stamp", "encrypted_candidate_id"]
     missing_fields = [field for field in required_fields if field not in data]
     if missing_fields:
         return jsonify({"error": f'{", ".join(missing_fields)} are required'}), 400
@@ -134,6 +143,7 @@ def submit_vote_election():
         election_id = int(data["election_id"])
         votes = int(data["votes"])
         proof = int(data["proof"])
+        time_stamp = int(data['time_stamp'])
         en_candidate_id = int(data["encrypted_candidate_id"])
     except ValueError:
         return (
@@ -151,7 +161,7 @@ def submit_vote_election():
     if election.status != ElectionStatus.ONGOING:
         return jsonify({"error": "Election is not active"}), 400
 
-    if pedersen.verify_commit(proof, election_id, votes, FIXED_R) is False:
+    if pedersen.verify_commit(proof, election_id, votes, time_stamp, FIXED_R) is False:
         return jsonify({"error": "Proof not valid"}), 400
 
     if proof in used_proofs:
