@@ -22,4 +22,4 @@
 /code/blockchain-voting-system/zk_snarks/verifier.sol
 # not sure if these are need to be ignored or not
 /code/blockchain-voting-system/zk_snarks/*.r1cs
-/code/blockchain-voting-system/zk_snarks/*.wtns
+/code/blockchain-voting-system/zk_snarks/*.wtns*:Zone.Identifier
